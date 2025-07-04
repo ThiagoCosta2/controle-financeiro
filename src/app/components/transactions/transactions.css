@@ -121,7 +121,8 @@
 }
 
 .popup-container {
-  background: white;
+  background-color: #34495e; /* Fundo do popup alterado para o tom escuro */
+  color: #ecf0f1; /* Cor do texto principal do popup */
   padding: 30px;
   border-radius: 8px;
   box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
@@ -131,24 +132,58 @@
 
 .popup-container h3 {
   margin-top: 0;
-  margin-bottom: 20px;
+  margin-bottom: 25px;
+  font-size: 22px;
+  text-align: center;
 }
 
 .form-group {
   margin-bottom: 20px;
 }
+
 .form-group label {
   display: block;
   margin-bottom: 8px;
   font-weight: 600;
+  color: #bdc3c7; /* Cor mais suave para os labels */
 }
+
+/* NOVA REGRA ATUALIZADA - Unifica os estilos dos inputs */
 .form-group input[type="text"],
-.form-group input[type="number"] {
+.form-group input[type="number"],
+.form-group input[type="date"],
+.form-group select {
   width: 100%;
-  padding: 10px;
-  border: 1px solid #ccc;
+  padding: 12px;
+  border: 1px solid #7f8c8d; /* Borda sutil */
+  background-color: #4a637b; /* Fundo do input */
   border-radius: 4px;
   box-sizing: border-box;
+  color: #ecf0f1; /* Cor do texto digitado */
+  font-size: 16px;
+  font-family: "Segoe UI", sans-serif; /* Fonte moderna */
+  outline: none;
+  transition: border-color 0.3s ease;
+}
+
+/* Efeito de foco para os inputs */
+.form-group input:focus,
+.form-group select:focus {
+  border-color: #3498db; /* Destaque ao focar */
+}
+
+/* NOVO - Estiliza o ícone do calendário para branco */
+.form-group input[type="date"]::-webkit-calendar-picker-indicator {
+  filter: invert(1);
+  cursor: pointer;
+}
+
+.checkbox-label {
+  font-weight: normal;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #ecf0f1;
 }
 
 .type-selector {
@@ -157,20 +192,14 @@
 }
 .type-selector label {
   font-weight: normal;
-}
-
-.fixed-income label {
-  font-weight: normal;
-  display: flex;
-  align-items: center;
-  gap: 8px;
+  color: #ecf0f1;
 }
 
 .popup-actions {
   display: flex;
   justify-content: flex-end;
   gap: 10px;
-  margin-top: 20px;
+  margin-top: 30px; /* Mais espaço acima dos botões */
 }
 
 .btn-primary,
@@ -180,23 +209,34 @@
   padding: 10px 20px;
   border-radius: 4px;
   cursor: pointer;
+  font-weight: bold;
+  transition: background-color 0.3s;
 }
 
 .btn-primary {
   background-color: #3498db;
   color: white;
 }
+.btn-primary:hover {
+  background-color: #2980b9;
+}
 .btn-primary:disabled {
-  background-color: #a9a9a9;
+  background-color: #7f8c8d;
   cursor: not-allowed;
 }
 
 .btn-secondary {
-  background-color: #ecf0f1;
-  color: #333;
+  background-color: #7f8c8d;
+  color: #ecf0f1;
+}
+.btn-secondary:hover {
+  background-color: #95a5a6;
 }
 
 .btn-danger {
   background-color: #e74c3c;
   color: white;
+}
+.btn-danger:hover {
+  background-color: #c0392b;
 }

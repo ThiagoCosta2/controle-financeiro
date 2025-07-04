@@ -1,4 +1,35 @@
-/* Estilos para os cartões de resumo (KPIs) */
+/* Adicione este código ao final do arquivo */
+
+/* Estilo para o cabeçalho da página de dashboard */
+.home-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 30px;
+}
+
+.home-header h2 {
+  font-size: 28px;
+  color: #34495e;
+}
+
+.btn-add-transaction {
+  background-color: #3498db;
+  color: white;
+  border: none;
+  padding: 12px 20px;
+  border-radius: 8px;
+  font-size: 16px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.btn-add-transaction:hover {
+  background-color: #2980b9;
+}
+
+/* Estilos para os cartões de resumo (KPIs) - MANTENHA O CÓDIGO EXISTENTE */
 .kpi-cards {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));

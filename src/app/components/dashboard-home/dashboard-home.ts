@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-dashboard-home',
@@ -9,12 +10,18 @@ import { CommonModule } from '@angular/common';
   styleUrls: ['./dashboard-home.css'],
 })
 export class DashboardHomeComponent {
-  // A nova propriedade para controlar a visibilidade dos valores.
-  // Começa como 'true' para que os valores sejam visíveis por padrão.
   areValuesVisible: boolean = true;
 
-  // Método para alternar a visibilidade.
+  constructor(private router: Router) {}
+
   toggleValuesVisibility(): void {
     this.areValuesVisible = !this.areValuesVisible;
+  }
+
+  // ATUALIZADO: Navega para a página de transações com um parâmetro para abrir o popup
+  goToAddTransaction(): void {
+    this.router.navigate(['/dashboard/transactions'], {
+      queryParams: { openPopup: 'true' },
+    });
   }
 }

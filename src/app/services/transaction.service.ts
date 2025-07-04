@@ -31,12 +31,13 @@ export class TransactionService {
     }
   }
 
-  addTransaction(transactionData: Omit<Transaction, 'id' | 'date'>): void {
+  // MÉTODO ATUALIZADO: Agora aceita um objeto com a data para permitir o agendamento de parcelas.
+  addTransaction(transactionData: Omit<Transaction, 'id'>): void {
     const transactions = this.getTransactions();
     const newTransaction: Transaction = {
       ...transactionData,
-      id: new Date().getTime().toString(), // ID único simples
-      date: new Date(),
+      // Gerando um ID um pouco mais robusto para evitar colisões ao adicionar rápido
+      id: new Date().getTime().toString() + Math.random().toString(),
     };
     transactions.push(newTransaction);
     this.saveTransactions(transactions);

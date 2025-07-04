@@ -119,6 +119,16 @@
       </div>
 
       <div class="form-group">
+        <label for="date">Data</label>
+        <input
+          type="date"
+          id="date"
+          formControlName="date"
+          class="form-control"
+        />
+      </div>
+
+      <div class="form-group">
         <label for="description">Descrição</label>
         <input
           type="text"
@@ -139,14 +149,45 @@
       </div>
 
       <div
-        class="form-group fixed-income"
-        *ngIf="transactionForm.get('type')?.value === 'income'"
+        class="form-group"
+        *ngIf="
+          transactionForm.get('type')?.value === 'income' && !currentTransaction
+        "
       >
-        <label>
+        <label class="checkbox-label">
           <input type="checkbox" formControlName="isFixed" />
-          É um lançamento fixo mensal? (Ex: Salário)
+          Repetir esta entrada mensalmente? (Gera para os próximos 12 meses)
         </label>
       </div>
+
+      <ng-container
+        *ngIf="
+          transactionForm.get('type')?.value === 'expense' &&
+          !currentTransaction
+        "
+      >
+        <div class="form-group">
+          <label class="checkbox-label">
+            <input type="checkbox" formControlName="isRecurring" />
+            É uma despesa parcelada?
+          </label>
+        </div>
+        <div
+          class="form-group"
+          *ngIf="transactionForm.get('isRecurring')?.value"
+        >
+          <label for="installments">Número de Parcelas</label>
+          <select
+            id="installments"
+            formControlName="installments"
+            class="form-control"
+          >
+            <option *ngFor="let i of installmentsOptions" [value]="i">
+              {{ i }}x
+            </option>
+          </select>
+        </div>
+      </ng-container>
 
       <div class="popup-actions">
         <button type="button" class="btn-secondary" (click)="closePopups()">
