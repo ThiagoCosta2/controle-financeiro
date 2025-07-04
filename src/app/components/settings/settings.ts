@@ -2,10 +2,11 @@ import { Component } from '@angular/core';
 
 @Component({
   selector: 'app-settings',
+  standalone: true,
   imports: [],
   templateUrl: './settings.html',
-  styleUrl: './settings.css'
+  styleUrls: [],
 })
-export class Settings {
-
+export class SettingsComponent {
+  // Nome da classe renomeado para consistência
 }

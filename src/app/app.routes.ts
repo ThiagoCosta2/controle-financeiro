@@ -10,7 +10,9 @@ import { authGuard } from './guards/auth-guard';
 // Importe os componentes filhos do dashboard
 import { DashboardHomeComponent } from './components/dashboard-home/dashboard-home';
 import { TransactionsComponent } from './components/transactions/transactions';
-// ... importe os outros (Reports, Settings)
+// Importando os componentes de Relatórios e Configurações
+import { ReportsComponent } from './components/reports/reports';
+import { SettingsComponent } from './components/settings/settings';
 
 export const routes: Routes = [
   { path: 'home', component: HomeComponent },
@@ -21,13 +23,12 @@ export const routes: Routes = [
     path: 'dashboard',
     component: DashboardComponent,
     canActivate: [authGuard],
-    // As rotas filhas que serão renderizadas no <router-outlet>
     children: [
-      // Quando a URL for /dashboard, mostre o DashboardHomeComponent
       { path: '', component: DashboardHomeComponent },
-      // Quando a URL for /dashboard/transactions, mostre o TransactionsComponent
       { path: 'transactions', component: TransactionsComponent },
-      // ... adicione as outras rotas filhas aqui
+      // Adicionando as rotas para Relatórios e Configurações
+      { path: 'reports', component: ReportsComponent },
+      { path: 'settings', component: SettingsComponent },
     ],
   },
 
