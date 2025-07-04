@@ -13,6 +13,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 @Component({
   selector: 'app-transactions',
   standalone: true,
+  // Imports foram limpos, sem Angular Material
   imports: [CommonModule, ReactiveFormsModule, CurrencyPipe],
   templateUrl: './transactions.html',
   styleUrls: ['./transactions.css'],
@@ -28,19 +29,17 @@ export class TransactionsComponent implements OnInit {
   constructor(
     private transactionService: TransactionService,
     private fb: FormBuilder,
-    private route: ActivatedRoute, // Para ler parâmetros da URL
-    private router: Router // Para navegar e limpar a URL
+    private route: ActivatedRoute,
+    private router: Router
   ) {}
 
   ngOnInit(): void {
     this.loadTransactions();
     this.initForm();
 
-    // Verifica se a URL contém o parâmetro para abrir o popup
     this.route.queryParams.subscribe((params) => {
       if (params['openPopup'] === 'true') {
         this.openAddPopup();
-        // Limpa o parâmetro da URL para não reabrir o popup ao recarregar a página
         this.router.navigate([], {
           relativeTo: this.route,
           queryParams: {},
@@ -54,7 +53,7 @@ export class TransactionsComponent implements OnInit {
     this.transactions = this.transactionService.getTransactions();
   }
 
-  // Formata um objeto Date para o formato 'YYYY-MM-DD' que o input[type=date] aceita
+  // Função para formatar a data para o input voltou a ser necessária
   private formatDateForInput(date: Date): string {
     return date.toISOString().split('T')[0];
   }
@@ -63,19 +62,17 @@ export class TransactionsComponent implements OnInit {
     this.transactionForm = this.fb.group({
       id: [null],
       type: ['expense', Validators.required],
-      date: [this.formatDateForInput(new Date()), Validators.required], // Usa a data atual como padrão
+      date: [this.formatDateForInput(new Date()), Validators.required],
       value: [null, [Validators.required, Validators.min(0.01)]],
       description: ['', Validators.required],
-      isFixed: [false], // Para receitas
-      isRecurring: [false], // Para despesas
+      isFixed: [false],
+      isRecurring: [false],
       installments: [{ value: 2, disabled: true }, Validators.required],
     });
 
-    // Habilita/desabilita campos com base no tipo (Entrada/Saída)
     this.transactionForm.get('type')?.valueChanges.subscribe((type) => {
       const isFixedControl = this.transactionForm.get('isFixed');
       const isRecurringControl = this.transactionForm.get('isRecurring');
-
       if (type === 'income') {
         isFixedControl?.enable();
         isRecurringControl?.setValue(false);
@@ -87,7 +84,6 @@ export class TransactionsComponent implements OnInit {
       }
     });
 
-    // Habilita/desabilita o seletor de parcelas
     this.transactionForm
       .get('isRecurring')
       ?.valueChanges.subscribe((isRecurring) => {
@@ -104,7 +100,7 @@ export class TransactionsComponent implements OnInit {
     this.currentTransaction = null;
     this.transactionForm.reset({
       type: 'expense',
-      date: this.formatDateForInput(new Date()), // Garante que a data seja a atual ao abrir
+      date: this.formatDateForInput(new Date()),
       value: null,
       description: '',
       isFixed: false,
@@ -118,7 +114,6 @@ export class TransactionsComponent implements OnInit {
 
   openEditPopup(transaction: Transaction): void {
     this.currentTransaction = transaction;
-    // As opções de recorrência são desabilitadas na edição para manter a simplicidade
     this.transactionForm.setValue({
       id: transaction.id,
       type: transaction.type,
@@ -156,21 +151,18 @@ export class TransactionsComponent implements OnInit {
 
     const formData = this.transactionForm.getRawValue();
 
-    // Lógica para editar uma transação existente
     if (this.currentTransaction && this.currentTransaction.id) {
       const updatedData: Transaction = {
         ...this.currentTransaction,
         ...formData,
-        date: new Date(formData.date + 'T00:00:00'), // Garante que a string de data seja convertida corretamente
+        date: new Date(formData.date + 'T00:00:00'),
       };
       this.transactionService.updateTransaction(updatedData);
     } else {
-      // Lógica para adicionar nova(s) transação(ões)
       const { isFixed, isRecurring, installments, ...newTxData } = formData;
-      const baseDate = new Date(newTxData.date + 'T12:00:00Z'); // Usar a data do formulário
+      const baseDate = new Date(newTxData.date + 'T12:00:00Z');
 
       if (newTxData.type === 'income' && isFixed) {
-        // Lógica para Renda Fixa: cria para os próximos 12 meses
         for (let i = 0; i < 12; i++) {
           const installmentDate = new Date(
             baseDate.getFullYear(),
@@ -179,7 +171,6 @@ export class TransactionsComponent implements OnInit {
           );
           const tx: Omit<Transaction, 'id'> = {
             ...newTxData,
-            description: `${newTxData.description}`, // Descrição não muda para renda fixa
             date: installmentDate,
             isFixed: true,
           };
@@ -190,7 +181,6 @@ export class TransactionsComponent implements OnInit {
         isRecurring &&
         installments > 1
       ) {
-        // Lógica para Despesa Parcelada
         for (let i = 0; i < installments; i++) {
           const installmentDate = new Date(
             baseDate.getFullYear(),
@@ -206,7 +196,6 @@ export class TransactionsComponent implements OnInit {
           this.transactionService.addTransaction(tx);
         }
       } else {
-        // Lógica para Transação Única
         const tx: Omit<Transaction, 'id'> = {
           ...newTxData,
           date: baseDate,
