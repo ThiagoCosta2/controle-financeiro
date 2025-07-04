@@ -1,0 +1,102 @@
+<!-- Secção para os cartões de resumo (KPIs) -->
+<section class="kpi-cards">
+  <div class="card">
+    <div class="card-header">
+      <h3 class="card-title">Saldo Atual</h3>
+      <button class="visibility-btn" (click)="toggleValuesVisibility()">
+        <svg
+          *ngIf="areValuesVisible"
+          xmlns="http://www.w3.org/2000/svg"
+          width="20"
+          height="20"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        >
+          <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+          <circle cx="12" cy="12" r="3"></circle>
+        </svg>
+        <svg
+          *ngIf="!areValuesVisible"
+          xmlns="http://www.w3.org/2000/svg"
+          width="20"
+          height="20"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        >
+          <path
+            d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 2c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"
+          ></path>
+          <line x1="1" y1="1" x2="23" y2="23"></line>
+        </svg>
+      </button>
+    </div>
+    <p
+      *ngIf="areValuesVisible; else hiddenValue"
+      class="card-value saldo-positivo"
+    >
+      R$ 5.780,50
+    </p>
+  </div>
+  <div class="card">
+    <h3 class="card-title">Receitas do Mês</h3>
+    <p *ngIf="areValuesVisible; else hiddenValue" class="card-value">
+      R$ 7.500,00
+    </p>
+  </div>
+  <div class="card">
+    <h3 class="card-title">Despesas do Mês</h3>
+    <p
+      *ngIf="areValuesVisible; else hiddenValue"
+      class="card-value saldo-negativo"
+    >
+      R$ 1.719,50
+    </p>
+  </div>
+</section>
+
+<!-- Template para o valor oculto -->
+<ng-template #hiddenValue>
+  <p class="card-value hidden">R$ ••••••</p>
+</ng-template>
+
+<!-- Secção para as transações recentes -->
+<section class="recent-transactions">
+  <h2>Transações Recentes</h2>
+  <ul class="transaction-list">
+    <li class="transaction-item">
+      <div class="transaction-details">
+        <span class="transaction-title">Salário Mensal</span>
+        <span class="transaction-category">Receita</span>
+      </div>
+      <span
+        *ngIf="areValuesVisible; else hiddenAmount"
+        class="transaction-amount saldo-positivo"
+        >+ R$ 7.500,00</span
+      >
+    </li>
+    <li class="transaction-item">
+      <div class="transaction-details">
+        <span class="transaction-title">Aluguel</span>
+        <span class="transaction-category">Moradia</span>
+      </div>
+      <span
+        *ngIf="areValuesVisible; else hiddenAmount"
+        class="transaction-amount saldo-negativo"
+        >- R$ 1.200,00</span
+      >
+    </li>
+  </ul>
+</section>
+
+<!-- Template para o valor da transação oculto -->
+<ng-template #hiddenAmount>
+  <span class="transaction-amount hidden">••••••</span>
+</ng-template>

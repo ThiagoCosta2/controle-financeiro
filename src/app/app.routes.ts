@@ -1,14 +1,18 @@
 import { Routes } from '@angular/router';
 
-// Importamos todos os componentes necessários para as rotas
+// Importe todos os seus componentes
 import { HomeComponent } from './components/home/home';
 import { LoginComponent } from './components/login/login';
 import { RegisterComponent } from './components/register/register';
 import { DashboardComponent } from './components/dashboard/dashboard';
 import { authGuard } from './guards/auth-guard';
 
+// Importe os componentes filhos do dashboard
+import { DashboardHomeComponent } from './components/dashboard-home/dashboard-home';
+import { TransactionsComponent } from './components/transactions/transactions';
+// ... importe os outros (Reports, Settings)
+
 export const routes: Routes = [
-  // 1. A ROTA INICIAL AGORA É A 'HOME'
   { path: 'home', component: HomeComponent },
   { path: 'login', component: LoginComponent },
   { path: 'register', component: RegisterComponent },
@@ -17,11 +21,16 @@ export const routes: Routes = [
     path: 'dashboard',
     component: DashboardComponent,
     canActivate: [authGuard],
+    // As rotas filhas que serão renderizadas no <router-outlet>
+    children: [
+      // Quando a URL for /dashboard, mostre o DashboardHomeComponent
+      { path: '', component: DashboardHomeComponent },
+      // Quando a URL for /dashboard/transactions, mostre o TransactionsComponent
+      { path: 'transactions', component: TransactionsComponent },
+      // ... adicione as outras rotas filhas aqui
+    ],
   },
 
-  // 2. REDIRECIONAMENTOS ATUALIZADOS
-  // Se alguém acessar a raiz do site, será levado para a 'home'.
   { path: '', redirectTo: 'home', pathMatch: 'full' },
-  // Se alguém tentar acessar uma URL que não existe, também será levado para a 'home'.
   { path: '**', redirectTo: 'home' },
 ];

@@ -1,0 +1,109 @@
+/* Estilos para os cartões de resumo (KPIs) */
+.kpi-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 20px;
+  margin-bottom: 40px;
+}
+
+.card {
+  background-color: #ffffff;
+  padding: 25px;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.card-title {
+  font-size: 16px;
+  color: #7f8c8d;
+  margin-bottom: 0;
+}
+
+.visibility-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 5px;
+  color: #7f8c8d;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.visibility-btn:hover {
+  color: #34495e;
+}
+
+.card-value {
+  font-size: 28px;
+  font-weight: bold;
+}
+
+.card-value.hidden {
+  color: #7f8c8d;
+  filter: blur(4px);
+}
+
+/* Estilos para as transações recentes */
+.recent-transactions h2 {
+  font-size: 22px;
+  margin-bottom: 20px;
+  color: #34495e;
+}
+
+.transaction-list {
+  list-style: none;
+  padding: 0;
+}
+
+.transaction-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: #ffffff;
+  padding: 20px;
+  border-radius: 8px;
+  margin-bottom: 15px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.transaction-details {
+  display: flex;
+  flex-direction: column;
+}
+
+.transaction-title {
+  font-size: 16px;
+  font-weight: bold;
+}
+
+.transaction-category {
+  font-size: 14px;
+  color: #7f8c8d;
+}
+
+.transaction-amount {
+  font-size: 18px;
+  font-weight: bold;
+}
+
+.transaction-amount.hidden {
+  color: #7f8c8d;
+  filter: blur(4px);
+}
+
+/* Cores para valores positivos e negativos */
+.saldo-positivo {
+  color: #27ae60;
+}
+
+.saldo-negativo {
+  color: #c0392b;
+}
