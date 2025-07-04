@@ -1,82 +1,99 @@
-import { Injectable } from '@angular/core';
+// 1. IMPORTAÇÕES ADICIONAIS
+import { Inject, Injectable, PLATFORM_ID } from '@angular/core';
+import { isPlatformBrowser } from '@angular/common';
 import { Router } from '@angular/router';
 
 @Injectable({
   providedIn: 'root',
 })
 export class AuthService {
-  // Define chaves únicas para salvar os dados no localStorage do navegador.
+  getCurrentUser() {
+    throw new Error('Method not implemented.');
+  }
   private readonly USERS_KEY = 'financial_app_users';
   private readonly LOGGED_IN_USER_KEY = 'financial_app_session';
 
-  constructor(private router: Router) {}
+  // Propriedade para guardar se estamos no navegador
+  private isBrowser: boolean;
 
-  /**
-   * Registra um novo usuário no sistema.
-   * Salva os dados no localStorage.
-   */
-  register(userData: any): boolean {
-    const users = this.getUsersFromStorage();
-    const userExists = users.some(
-      (u) => u.usuario === userData.usuario || u.email === userData.email
-    );
-
-    if (userExists) {
-      alert('Erro: Usuário ou e-mail já cadastrado.');
-      return false;
-    }
-
-    // ATENÇÃO: Em um projeto real, a senha NUNCA deve ser salva como texto puro.
-    // Ela precisa ser criptografada (hashed) em um servidor back-end.
-    users.push(userData);
-    this.saveUsersToStorage(users);
-    alert('Conta criada com sucesso! Por favor, faça o login.');
-    return true;
+  // 2. INJETA O PLATFORM_ID PARA SABER ONDE O CÓDIGO ESTÁ RODANDO
+  constructor(
+    private router: Router,
+    @Inject(PLATFORM_ID) private platformId: object
+  ) {
+    // Verifica uma vez e armazena o resultado
+    this.isBrowser = isPlatformBrowser(this.platformId);
   }
 
-  /**
-   * Tenta autenticar um usuário com as credenciais fornecidas.
-   */
-  login(credentials: any): boolean {
-    const users = this.getUsersFromStorage();
-    const foundUser = users.find(
-      (u) => u.usuario === credentials.usuario && u.senha === credentials.senha
-    );
+  register(userData: any): boolean {
+    // 3. ADICIONA A VERIFICAÇÃO ANTES DE USAR O LOCALSTORAGE
+    if (this.isBrowser) {
+      const users = this.getUsersFromStorage();
+      const userExists = users.some(
+        (u) => u.usuario === userData.usuario || u.email === userData.email
+      );
 
-    if (foundUser) {
-      // Se o usuário for encontrado, salva a sessão no localStorage.
-      localStorage.setItem(this.LOGGED_IN_USER_KEY, JSON.stringify(foundUser));
+      if (userExists) {
+        alert('Erro: Usuário ou e-mail já cadastrado.');
+        return false;
+      }
+
+      users.push(userData);
+      this.saveUsersToStorage(users);
       return true;
     }
+    return false; // No servidor, o registro não pode ocorrer
+  }
 
-    alert('Usuário ou senha inválidos.');
+  login(credentials: any): boolean {
+    if (this.isBrowser) {
+      const users = this.getUsersFromStorage();
+      const foundUser = users.find(
+        (u) =>
+          u.usuario === credentials.usuario && u.senha === credentials.senha
+      );
+
+      if (foundUser) {
+        localStorage.setItem(
+          this.LOGGED_IN_USER_KEY,
+          JSON.stringify(foundUser)
+        );
+        return true;
+      }
+
+      alert('Usuário ou senha inválidos.');
+      return false;
+    }
     return false;
   }
 
-  /**
-   * Remove a sessão do usuário do localStorage e o redireciona para o login.
-   */
   logout(): void {
-    localStorage.removeItem(this.LOGGED_IN_USER_KEY);
-    this.router.navigate(['/login']);
+    if (this.isBrowser) {
+      localStorage.removeItem(this.LOGGED_IN_USER_KEY);
+      this.router.navigate(['/login']);
+    }
   }
 
-  /**
-   * Verifica se existe uma sessão de usuário ativa.
-   * Este é o método que o Guardião de Rota irá usar.
-   */
   isAuthenticated(): boolean {
-    return localStorage.getItem(this.LOGGED_IN_USER_KEY) !== null;
+    if (this.isBrowser) {
+      return localStorage.getItem(this.LOGGED_IN_USER_KEY) !== null;
+    }
+    return false; // Se não está no navegador, não está autenticado
   }
 
   // --- Métodos de apoio privados ---
 
   private getUsersFromStorage(): any[] {
-    const users = localStorage.getItem(this.USERS_KEY);
-    return users ? JSON.parse(users) : [];
+    if (this.isBrowser) {
+      const users = localStorage.getItem(this.USERS_KEY);
+      return users ? JSON.parse(users) : [];
+    }
+    return [];
   }
 
   private saveUsersToStorage(users: any[]): void {
-    localStorage.setItem(this.USERS_KEY, JSON.stringify(users));
+    if (this.isBrowser) {
+      localStorage.setItem(this.USERS_KEY, JSON.stringify(users));
+    }
   }
 }

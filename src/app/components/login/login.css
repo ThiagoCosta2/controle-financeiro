@@ -71,3 +71,14 @@ input::placeholder {
 .link-criar-conta:hover {
   color: #ffffff;
 }
+
+/* Adicione este estilo no final do seu arquivo login.css */
+.success-message {
+  padding: 15px;
+  margin-bottom: 20px;
+  border-radius: 4px;
+  color: #155724; /* Verde escuro para o texto */
+  background-color: #d4edda; /* Fundo verde claro */
+  border: 1px solid #c3e6cb;
+  text-align: center;
+}

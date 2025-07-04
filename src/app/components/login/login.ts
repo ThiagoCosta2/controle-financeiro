@@ -1,26 +1,43 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Router, RouterLink } from '@angular/router';
-import { FormsModule } from '@angular/forms'; // 1. IMPORTADO AQUI
+// Precisamos do ActivatedRoute para ler os parâmetros da URL
+import { Router, RouterLink, ActivatedRoute } from '@angular/router';
+// FormsModule é necessário para o [(ngModel)]
+import { FormsModule } from '@angular/forms';
 import { AuthService } from '../../services/auth.service';
 
 @Component({
   selector: 'app-login',
   standalone: true,
-  imports: [CommonModule, RouterLink, FormsModule], // 2. ADICIONADO AQUI
+  imports: [CommonModule, FormsModule, RouterLink],
   templateUrl: './login.html',
   styleUrls: ['./login.css'],
-  providers: [AuthService], // <-- Adicionado para injeção de dependência
 })
-export class LoginComponent {
-  // 3. PROPRIEDADES DECLARADAS
+export class LoginComponent implements OnInit {
+  // Propriedades para conectar com os inputs do formulário
   usuario = '';
   senha = '';
 
-  constructor(private authService: AuthService, private router: Router) {}
+  // Propriedade para guardar a mensagem de sucesso
+  successMessage = '';
 
-  // 4. MÉTODO ONSUBMIT DECLARADO
-  onSubmit() {
+  constructor(
+    private authService: AuthService,
+    private router: Router,
+    private route: ActivatedRoute // Injeta o ActivatedRoute
+  ) {}
+
+  ngOnInit(): void {
+    // Verifica se a URL tem o parâmetro 'registered=true'
+    this.route.queryParams.subscribe((params) => {
+      if (params['registered'] === 'true') {
+        this.successMessage =
+          'Conta criada com sucesso! Por favor, faça o login.';
+      }
+    });
+  }
+
+  onSubmit(): void {
     if (!this.usuario || !this.senha) {
       alert('Por favor, preencha todos os campos.');
       return;
@@ -31,9 +48,10 @@ export class LoginComponent {
       senha: this.senha,
     });
 
-    if (!success) {
-      // O alerta de "usuário ou senha inválidos" já está no seu serviço
-      this.senha = ''; // Limpa o campo de senha em caso de falha
+    if (success) {
+      // Se o login for bem-sucedido, navega para o dashboard
+      this.router.navigate(['/dashboard']);
     }
+    // Se não for sucesso, o serviço já mostra um alerta de erro.
   }
 }

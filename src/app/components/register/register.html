@@ -1,25 +1,85 @@
 <div class="register-container">
-  <form>
+  <!--
+      As diretivas [formGroup] e (ngSubmit) são essenciais.
+      Elas garantem que o Angular controle o formulário e evite o recarregamento da página.
+    -->
+  <form [formGroup]="registerForm" (ngSubmit)="onSubmit()">
     <h2>Criar Conta</h2>
 
-    <input type="text" placeholder="Nome Completo" required />
-
-    <input type="email" placeholder="E-mail" required />
-    <div class="error-message">
-      Por favor, insira um formato de e-mail válido.
+    <!-- Campo Nome Completo -->
+    <input type="text" placeholder="Nome Completo" formControlName="nome" />
+    <!-- A diretiva *ngIf mostra o erro apenas quando o campo é inválido e foi tocado -->
+    <div
+      *ngIf="
+        registerForm.get('nome')?.invalid && registerForm.get('nome')?.touched
+      "
+      class="error-message"
+    >
+      Nome é obrigatório.
     </div>
 
-    <input type="text" placeholder="Usuário" required />
-
-    <input type="password" placeholder="Senha" required />
-    <div class="error-message">
-      A senha deve ter no mínimo 8 caracteres, com maiúsculas, minúsculas e ...
-      um caractere especial (&#64;$!%*?&).
+    <!-- Campo E-mail -->
+    <input type="email" placeholder="E-mail" formControlName="email" />
+    <div
+      *ngIf="
+        registerForm.get('email')?.touched && registerForm.get('email')?.errors
+      "
+      class="error-message"
+    >
+      <span *ngIf="registerForm.get('email')?.errors?.['required']"
+        >E-mail é obrigatório.</span
+      >
+      <span *ngIf="registerForm.get('email')?.errors?.['email']"
+        >Formato de e-mail inválido.</span
+      >
     </div>
 
-    <input type="password" placeholder="Confirmar Senha" required />
-    <div class="error-message">As senhas não coincidem.</div>
+    <!-- Campo Usuário -->
+    <input type="text" placeholder="Usuário" formControlName="usuario" />
+    <div
+      *ngIf="
+        registerForm.get('usuario')?.invalid &&
+        registerForm.get('usuario')?.touched
+      "
+      class="error-message"
+    >
+      Usuário é obrigatório.
+    </div>
 
+    <!-- Campo Senha -->
+    <input type="password" placeholder="Senha" formControlName="senha" />
+    <div
+      *ngIf="
+        registerForm.get('senha')?.touched && registerForm.get('senha')?.errors
+      "
+      class="error-message"
+    >
+      <span *ngIf="registerForm.get('senha')?.errors?.['required']"
+        >Senha é obrigatória.</span
+      >
+      <span *ngIf="registerForm.get('senha')?.errors?.['minlength']"
+        >A senha deve ter no mínimo 8 caracteres.</span
+      >
+      <span *ngIf="registerForm.get('senha')?.errors?.['pattern']"
+        >Use maiúsculas, minúsculas, números e um caractere especial
+        (&#64;$!%*?&).</span
+      >
+    </div>
+
+    <!-- Campo Confirmar Senha -->
+    <input
+      type="password"
+      placeholder="Confirmar Senha"
+      formControlName="confirmarSenha"
+    />
+    <div
+      *ngIf="registerForm.get('confirmarSenha')?.touched && registerForm.errors?.['naoCoincidem']"
+      class="error-message"
+    >
+      As senhas não coincidem.
+    </div>
+
+    <!-- O botão agora aciona o (ngSubmit) do formulário -->
     <button type="submit" class="btn-primary">Criar Conta</button>
 
     <a class="link-login" routerLink="/login">Já tem uma conta? Entrar</a>

@@ -1,29 +1,39 @@
 import { Routes } from '@angular/router';
 import { LoginComponent } from './components/login/login';
 import { RegisterComponent } from './components/register/register';
-import { Dashboard } from './components/dashboard/dashboard';
-
-// Importa o guardião que acabamos de criar.
+import { DashboardComponent } from './components/dashboard/dashboard';
 import { authGuard } from './guards/auth-guard';
 
+// Para as rotas filhas, vamos criar componentes de exemplo.
+// No seu terminal, rode:
+// ng g c components/transactions
+// ng g c components/reports
+// ng g c components/settings
+// ng g c components/dashboard-home  // Esta será a tela inicial do dashboard
+
+import { Transactions } from './components/transactions/transactions';
+import { Reports } from './components/reports/reports';
+import { Settings } from './components/settings/settings';
+import { Dashboard } from './components/dashboard/dashboard';
+
 export const routes: Routes = [
-  // --- Rotas Públicas ---
-  // Qualquer pessoa, logada ou não, pode acessar estas rotas.
   { path: 'login', component: LoginComponent },
   { path: 'register', component: RegisterComponent },
 
-  // --- Rota Protegida ---
-  // Apenas usuários autenticados podem acessar esta rota.
+  // Rota do Dashboard agora é um "Layout" que contém outras rotas
   {
     path: 'dashboard',
-    component: Dashboard,
-    canActivate: [authGuard], // O guardião é aplicado aqui!
+    component: DashboardComponent,
+    canActivate: [authGuard],
+    children: [
+      // Quando o usuário for para '/dashboard', ele verá o DashboardHomeComponent
+      { path: '', component: DashboardHomeComponent },
+      { path: 'transactions', component: TransactionsComponent },
+      { path: 'reports', component: ReportsComponent },
+      { path: 'settings', component: SettingsComponent },
+    ],
   },
 
-  // --- Redirecionamentos ---
-  // Se alguém acessar a raiz do site (ex: "meusite.com"), será levado para a tela de login.
   { path: '', redirectTo: 'login', pathMatch: 'full' },
-
-  // Se alguém tentar acessar uma URL que não existe, também será levado para o login.
   { path: '**', redirectTo: 'login' },
 ];

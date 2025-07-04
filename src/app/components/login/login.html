@@ -1,6 +1,16 @@
 <div class="login-container">
+  <!-- 
+    CORREÇÕES:
+    1. (ngSubmit)="onSubmit()" -> Chama a função de login.
+    2. [(ngModel)]="..." -> Conecta os inputs às propriedades do TypeScript.
+  -->
   <form (ngSubmit)="onSubmit()">
     <h2>Acessar Sistema</h2>
+
+    <!-- Mensagem de sucesso que só aparece quando a propriedade successMessage não está vazia -->
+    <div *ngIf="successMessage" class="success-message">
+      {{ successMessage }}
+    </div>
 
     <input
       type="text"
@@ -9,7 +19,6 @@
       [(ngModel)]="usuario"
       required
     />
-
     <input
       type="password"
       placeholder="Senha"
@@ -20,6 +29,6 @@
 
     <button type="submit" class="btn-primary">Entrar</button>
 
-    <a routerLink="/register" class="link-criar-conta">Criar Conta</a>
+    <a class="link-criar-conta" routerLink="/register">Criar Conta</a>
   </form>
 </div>
