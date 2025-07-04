@@ -1,41 +1,27 @@
 <div class="register-container">
-  <form (ngSubmit)="onSubmit()">
+  <form>
     <h2>Criar Conta</h2>
 
-    <input
-      type="text"
-      placeholder="Nome Completo"
-      name="nome"
-      [(ngModel)]="nome"
-      required
-    />
+    <input type="text" placeholder="Nome Completo" required />
 
-    <input
-      type="text"
-      placeholder="Usuário"
-      name="usuario"
-      [(ngModel)]="usuario"
-      required
-    />
+    <input type="email" placeholder="E-mail" required />
+    <div class="error-message">
+      Por favor, insira um formato de e-mail válido.
+    </div>
 
-    <input
-      type="password"
-      placeholder="Senha"
-      name="senha"
-      [(ngModel)]="senha"
-      required
-    />
+    <input type="text" placeholder="Usuário" required />
 
-    <input
-      type="password"
-      placeholder="Confirmar Senha"
-      name="confirmarSenha"
-      [(ngModel)]="confirmarSenha"
-      required
-    />
+    <input type="password" placeholder="Senha" required />
+    <div class="error-message">
+      A senha deve ter no mínimo 8 caracteres, com maiúsculas, minúsculas e ...
+      um caractere especial (&#64;$!%*?&).
+    </div>
 
-    <button type="submit" class="btn-primary">Criar</button>
+    <input type="password" placeholder="Confirmar Senha" required />
+    <div class="error-message">As senhas não coincidem.</div>
 
-    <a routerLink="/login" class="link-voltar">Já tenho uma conta</a>
+    <button type="submit" class="btn-primary">Criar Conta</button>
+
+    <a class="link-login" routerLink="/login">Já tem uma conta? Entrar</a>
   </form>
 </div>

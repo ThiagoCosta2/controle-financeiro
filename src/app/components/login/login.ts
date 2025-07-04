@@ -10,6 +10,7 @@ import { AuthService } from '../../services/auth.service';
   imports: [CommonModule, RouterLink, FormsModule], // 2. ADICIONADO AQUI
   templateUrl: './login.html',
   styleUrls: ['./login.css'],
+  providers: [AuthService], // <-- Adicionado para injeção de dependência
 })
 export class LoginComponent {
   // 3. PROPRIEDADES DECLARADAS

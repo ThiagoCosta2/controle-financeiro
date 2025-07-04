@@ -1,13 +1,14 @@
 import { Component } from '@angular/core';
-import { RouterOutlet, RouterLink } from '@angular/router';
+import { CommonModule } from '@angular/common';
+import { RouterOutlet } from '@angular/router';
 
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet, RouterLink], // Adicione RouterLink aqui
+  standalone: true,
+  imports: [CommonModule, RouterOutlet],
   templateUrl: './app.html',
-  styleUrl: './app.css',
-  standalone: true, // também importante garantir que seja standalone
+  styleUrls: ['./app.css'],
 })
 export class App {
-  protected title = 'controle-financeiro';
+  title = 'controle-financeiro';
 }

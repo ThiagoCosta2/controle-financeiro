@@ -1,0 +1,101 @@
+/* Container principal que centraliza o formulário na tela */
+.register-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  background-color: #2c3e50; /* Mesmo fundo da tela de login */
+}
+
+/* O formulário em si */
+form {
+  display: flex;
+  flex-direction: column; /* Organiza os itens em coluna */
+  gap: 15px; /* Espaçamento padrão entre os itens */
+  padding: 40px;
+  background-color: #34495e; /* Cor do card do formulário */
+  border-radius: 8px;
+  width: 100%;
+  max-width: 400px; /* Largura máxima do formulário */
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+}
+
+/* Estilo do título "Criar Conta" */
+h2 {
+  color: #ecf0f1;
+  text-align: center;
+  margin-bottom: 10px;
+  font-family: sans-serif;
+}
+
+/* Estilo dos campos de input */
+input {
+  padding: 12px;
+  border: 1px solid #7f8c8d;
+  background-color: #4a637b;
+  border-radius: 4px;
+  color: #ecf0f1;
+  font-size: 16px;
+  outline: none; /* Remove a borda azul padrão ao focar */
+  transition: border-color 0.3s ease;
+}
+
+input::placeholder {
+  color: #bdc3c7;
+}
+
+input:focus {
+  border-color: #3498db; /* Borda azul ao focar no input */
+}
+
+/* Estilo para o input quando houver um erro de validação */
+input.input-error {
+  border-color: #e74c3c; /* Borda vermelha para indicar erro */
+}
+
+/* Estilo para as mensagens de erro */
+.error-message {
+  color: #e74c3c; /* Cor vermelha para o texto do erro */
+  font-size: 14px;
+  margin-top: -10px; /* Puxa a mensagem para perto do input acima */
+  margin-bottom: 5px; /* Espaço antes do próximo elemento */
+  display: none; /* O erro só aparece quando necessário (controlado por JS/TS) */
+}
+
+/* IMPORTANTE: Você usará uma classe para mostrar o erro */
+.error-message.show {
+  display: block;
+}
+
+/* Botão principal de "Criar Conta" */
+.btn-primary {
+  padding: 12px;
+  margin-top: 10px; /* Mais espaço antes do botão */
+  border: none;
+  background-color: #3498db;
+  color: white;
+  font-size: 16px;
+  font-weight: bold;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.btn-primary:hover {
+  background-color: #2980b9;
+}
+
+/* Link "Já tem uma conta? Entrar" */
+.link-login {
+  color: #bdc3c7;
+  text-align: center;
+  text-decoration: none;
+  font-family: sans-serif;
+  cursor: pointer;
+  transition: color 0.3s ease;
+  margin-top: 10px;
+}
+
+.link-login:hover {
+  color: #ffffff;
+}

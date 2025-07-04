@@ -1,1 +1,86 @@
-<p>dashboard works!</p>
+<!-- dashboard.component.html -->
+<div class="dashboard-container">
+  <!-- BARRA LATERAL DE NAVEGAÇÃO -->
+  <aside class="sidebar">
+    <div class="sidebar-header">
+      <h2 class="sidebar-title">Controle$</h2>
+    </div>
+    <nav class="sidebar-nav">
+      <a href="#" class="nav-item active">
+        <!-- Ícone (ex: casa) -->
+        <span>Dashboard</span>
+      </a>
+      <a href="#" class="nav-item">
+        <!-- Ícone (ex: transações) -->
+        <span>Transações</span>
+      </a>
+      <a href="#" class="nav-item">
+        <!-- Ícone (ex: gráfico) -->
+        <span>Relatórios</span>
+      </a>
+      <a href="#" class="nav-item">
+        <!-- Ícone (ex: configurações) -->
+        <span>Configurações</span>
+      </a>
+    </nav>
+    <div class="sidebar-footer">
+      <a href="/login" class="nav-item">
+        <!-- Ícone (ex: sair) -->
+        <span>Sair</span>
+      </a>
+    </div>
+  </aside>
+
+  <!-- CONTEÚDO PRINCIPAL -->
+  <main class="main-content">
+    <!-- CABEÇALHO DO CONTEÚDO -->
+    <header class="main-header">
+      <h1>Olá, Usuário!</h1>
+      <button class="btn-add-transaction">+ Adicionar Transação</button>
+    </header>
+
+    <!-- CARDS DE RESUMO (KPIs) -->
+    <section class="kpi-cards">
+      <div class="card">
+        <h3 class="card-title">Saldo Atual</h3>
+        <p class="card-value saldo-positivo">R$ 5.780,50</p>
+      </div>
+      <div class="card">
+        <h3 class="card-title">Receitas do Mês</h3>
+        <p class="card-value">R$ 7.500,00</p>
+      </div>
+      <div class="card">
+        <h3 class="card-title">Despesas do Mês</h3>
+        <p class="card-value saldo-negativo">R$ 1.719,50</p>
+      </div>
+    </section>
+
+    <!-- TRANSAÇÕES RECENTES -->
+    <section class="recent-transactions">
+      <h2>Transações Recentes</h2>
+      <ul class="transaction-list">
+        <li class="transaction-item">
+          <div class="transaction-details">
+            <span class="transaction-title">Salário Mensal</span>
+            <span class="transaction-category">Receita</span>
+          </div>
+          <span class="transaction-amount saldo-positivo">+ R$ 7.500,00</span>
+        </li>
+        <li class="transaction-item">
+          <div class="transaction-details">
+            <span class="transaction-title">Aluguel</span>
+            <span class="transaction-category">Moradia</span>
+          </div>
+          <span class="transaction-amount saldo-negativo">- R$ 1.200,00</span>
+        </li>
+        <li class="transaction-item">
+          <div class="transaction-details">
+            <span class="transaction-title">Supermercado</span>
+            <span class="transaction-category">Alimentação</span>
+          </div>
+          <span class="transaction-amount saldo-negativo">- R$ 519,50</span>
+        </li>
+      </ul>
+    </section>
+  </main>
+</div>
