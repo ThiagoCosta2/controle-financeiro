@@ -1,0 +1,112 @@
+:host {
+  display: block;
+  font-family: "Segoe UI", sans-serif;
+  background-color: #1f2e36;
+  color: #ffffff;
+  min-height: 100vh;
+  width: 100vw; /* Adiciona largura total da viewport */
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box; /* Evita que padding cause overflow */
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px 40px;
+  background-color: #1f2e36;
+}
+
+.logo h1 {
+  margin: 0;
+  font-weight: bold;
+  color: #ffffff;
+}
+
+.header ul {
+  list-style: none;
+  display: flex;
+  gap: 30px;
+  margin: 0;
+  padding: 0;
+}
+
+.header ul li a {
+  text-decoration: none;
+  color: #ffffff;
+  font-weight: 500;
+  transition: 0.3s ease;
+}
+
+.header ul li a:hover {
+  color: #4ac9ff;
+}
+
+.btn-acessar {
+  background-color: #4ac9ff;
+  padding: 10px 20px;
+  border-radius: 8px;
+  color: #000;
+  font-weight: bold;
+  text-decoration: none;
+  border: none;
+  transition: background-color 0.3s ease, color 0.3s ease, transform 0.2s ease;
+  cursor: pointer;
+}
+
+.btn-acessar:hover {
+  background-color: #fff; /* Fundo branco para máximo contraste */
+  color: #070707; /* Texto preto */
+  transform: scale(1.05);
+  border: 1px solid #4ac9ff; /* Opcional: destaca o botão */
+}
+
+.hero {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  .btn-acessar:hover {
+    background-color: #4ac9ff;
+    color: #000;
+    transform: scale(1.05);
+  }
+  align-items: center;
+  padding: 60px 40px;
+}
+
+.hero-text {
+  flex: 1 1 300px;
+  max-width: 600px;
+}
+
+.hero-text h2 {
+  font-size: 2.5rem;
+  font-weight: 700;
+  margin-bottom: 20px;
+}
+
+.hero-text p {
+  font-size: 1.2rem;
+  margin-bottom: 30px;
+}
+
+.hero-image {
+  flex: 1 1 300px;
+  display: flex;
+  justify-content: center;
+  margin-top: 30px;
+}
+
+.hero-image img {
+  max-width: 100%;
+  height: auto;
+  border-radius: 16px;
+}
+
+.footer {
+  text-align: center;
+  padding: 20px;
+  font-size: 0.9rem;
+  color: #aaa;
+}
