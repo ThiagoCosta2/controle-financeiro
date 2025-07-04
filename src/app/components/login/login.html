@@ -1,13 +1,25 @@
-<section class="login-container">
-  <div class="login-box">
+<div class="login-container">
+  <form (ngSubmit)="onSubmit()">
     <h2>Acessar Sistema</h2>
-    <form>
-      <input type="text" placeholder="Usuário" />
-      <input type="password" placeholder="Senha" />
-      <button class="btn-login">Entrar</button>
-    </form>
-    <div class="actions">
-      <button class="btn-secondary" routerLink="/register">Criar Conta</button>
-    </div>
-  </div>
-</section>
+
+    <input
+      type="text"
+      placeholder="Usuário"
+      name="usuario"
+      [(ngModel)]="usuario"
+      required
+    />
+
+    <input
+      type="password"
+      placeholder="Senha"
+      name="senha"
+      [(ngModel)]="senha"
+      required
+    />
+
+    <button type="submit" class="btn-primary">Entrar</button>
+
+    <a routerLink="/register" class="link-criar-conta">Criar Conta</a>
+  </form>
+</div>

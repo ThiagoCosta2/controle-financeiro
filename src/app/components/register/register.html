@@ -1,0 +1,41 @@
+<div class="register-container">
+  <form (ngSubmit)="onSubmit()">
+    <h2>Criar Conta</h2>
+
+    <input
+      type="text"
+      placeholder="Nome Completo"
+      name="nome"
+      [(ngModel)]="nome"
+      required
+    />
+
+    <input
+      type="text"
+      placeholder="Usuário"
+      name="usuario"
+      [(ngModel)]="usuario"
+      required
+    />
+
+    <input
+      type="password"
+      placeholder="Senha"
+      name="senha"
+      [(ngModel)]="senha"
+      required
+    />
+
+    <input
+      type="password"
+      placeholder="Confirmar Senha"
+      name="confirmarSenha"
+      [(ngModel)]="confirmarSenha"
+      required
+    />
+
+    <button type="submit" class="btn-primary">Criar</button>
+
+    <a routerLink="/login" class="link-voltar">Já tenho uma conta</a>
+  </form>
+</div>

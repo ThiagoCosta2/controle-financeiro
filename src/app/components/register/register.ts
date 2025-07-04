@@ -5,34 +5,42 @@ import { FormsModule } from '@angular/forms'; // 1. IMPORTADO AQUI
 import { AuthService } from '../../services/auth.service';
 
 @Component({
-  selector: 'app-login',
+  selector: 'app-register',
   standalone: true,
   imports: [CommonModule, RouterLink, FormsModule], // 2. ADICIONADO AQUI
-  templateUrl: './login.html',
-  styleUrls: ['./login.css'],
+  templateUrl: './register.html',
+  styleUrls: ['./register.css'],
 })
-export class LoginComponent {
+export class RegisterComponent {
   // 3. PROPRIEDADES DECLARADAS
+  nome = '';
   usuario = '';
   senha = '';
+  confirmarSenha = '';
 
   constructor(private authService: AuthService, private router: Router) {}
 
   // 4. MÉTODO ONSUBMIT DECLARADO
   onSubmit() {
-    if (!this.usuario || !this.senha) {
-      alert('Por favor, preencha todos os campos.');
+    if (!this.nome || !this.usuario || !this.senha) {
+      alert('Por favor, preencha todos os campos obrigatórios.');
       return;
     }
 
-    const success = this.authService.login({
+    if (this.senha !== this.confirmarSenha) {
+      alert('As senhas não coincidem!');
+      return;
+    }
+
+    const success = this.authService.register({
+      nome: this.nome,
       usuario: this.usuario,
       senha: this.senha,
     });
 
-    if (!success) {
-      // O alerta de "usuário ou senha inválidos" já está no seu serviço
-      this.senha = ''; // Limpa o campo de senha em caso de falha
+    if (success) {
+      // O alerta de sucesso já está no seu serviço
+      this.router.navigate(['/login']); // Redireciona para o login
     }
   }
 }
