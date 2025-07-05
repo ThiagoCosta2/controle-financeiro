@@ -141,25 +141,42 @@
       <div class="form-group">
         <label for="value">Valor</label>
         <input
-          type="number"
+          type="text"
+          inputmode="decimal"
           id="value"
           formControlName="value"
-          placeholder="0,00"
+          placeholder="R$ 0,00"
+          (input)="formatCurrency($event)"
         />
       </div>
 
-      <div
-        class="form-group"
+      <!-- Bloco de Recorrência de Receita (INCOME) -->
+      <ng-container
         *ngIf="
           transactionForm.get('type')?.value === 'income' && !currentTransaction
         "
       >
-        <label class="checkbox-label">
-          <input type="checkbox" formControlName="isFixed" />
-          Repetir esta entrada mensalmente? (Gera para os próximos 12 meses)
-        </label>
-      </div>
+        <div class="form-group">
+          <label class="checkbox-label">
+            <input type="checkbox" formControlName="isFixed" />
+            É uma receita recorrente?
+          </label>
+        </div>
+        <div class="form-group" *ngIf="transactionForm.get('isFixed')?.value">
+          <label for="installments-income">Repetir por quantos meses?</label>
+          <select
+            id="installments-income"
+            formControlName="installments"
+            class="form-control"
+          >
+            <option *ngFor="let i of installmentsOptions" [value]="i">
+              {{ i }} meses
+            </option>
+          </select>
+        </div>
+      </ng-container>
 
+      <!-- Bloco de Parcelamento de Despesa (EXPENSE) -->
       <ng-container
         *ngIf="
           transactionForm.get('type')?.value === 'expense' &&
@@ -176,9 +193,9 @@
           class="form-group"
           *ngIf="transactionForm.get('isRecurring')?.value"
         >
-          <label for="installments">Número de Parcelas</label>
+          <label for="installments-expense">Número de Parcelas</label>
           <select
-            id="installments"
+            id="installments-expense"
             formControlName="installments"
             class="form-control"
           >

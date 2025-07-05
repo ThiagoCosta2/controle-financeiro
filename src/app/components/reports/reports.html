@@ -1,1 +1,109 @@
-<p>reports works!</p>
+<div class="reports-container">
+  <h1>Relatório Financeiro</h1>
+
+  <!-- Seção dos Gráficos -->
+  <div class="charts-section">
+    <div class="chart-card">
+      <!-- Adicionado o 'chart-wrapper' para servir de molde -->
+      <div class="chart-wrapper">
+        <canvas id="currentMonthChart"></canvas>
+      </div>
+      <div class="summary-text">
+        <p>
+          <strong>Entradas (com saldo anterior):</strong>
+          {{ currentMonthIncome | currency : "BRL" }}
+        </p>
+        <p>
+          <strong>Saídas:</strong> {{ currentMonthExpenses | currency : "BRL" }}
+        </p>
+        <p
+          class="balance"
+          [ngClass]="{
+            positive: currentMonthBalance >= 0,
+            negative: currentMonthBalance < 0
+          }"
+        >
+          <strong>Saldo do Mês:</strong>
+          {{ currentMonthBalance | currency : "BRL" }}
+        </p>
+      </div>
+    </div>
+    <div class="chart-card">
+      <!-- Adicionado o 'chart-wrapper' para servir de molde -->
+      <div class="chart-wrapper">
+        <canvas id="futureProjectionsChart"></canvas>
+      </div>
+      <div class="summary-text">
+        <p>
+          <strong>Total de Despesas Futuras Agendadas:</strong>
+          {{ futureExpenses | currency : "BRL" }}
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Seção do Histórico (sem alterações) -->
+  <div class="history-section">
+    <h2>Histórico de Transações (Últimos 3 Meses)</h2>
+    <div *ngIf="allRecentTransactions.length > 0; else noHistory">
+      <div class="transactions-list">
+        <div
+          *ngFor="let transaction of paginatedTransactions"
+          class="transaction-item"
+          [ngClass]="{
+            income: transaction.type === 'income',
+            expense: transaction.type === 'expense'
+          }"
+        >
+          <div class="transaction-details">
+            <span class="transaction-description">{{
+              transaction.description
+            }}</span>
+            <span class="transaction-date">{{
+              transaction.date | date : "dd/MM/yyyy"
+            }}</span>
+          </div>
+          <div class="transaction-value">
+            {{ transaction.value | currency : "BRL" }}
+          </div>
+        </div>
+      </div>
+
+      <div class="pagination-controls" *ngIf="totalPages > 0">
+        <div class="items-per-page-selector">
+          <label for="items-per-page">Itens por página:</label>
+          <select
+            id="items-per-page"
+            (change)="onItemsPerPageChange($event)"
+            [value]="itemsPerPage"
+          >
+            <option *ngFor="let option of itemsPerPageOptions" [value]="option">
+              {{ option }}
+            </option>
+          </select>
+        </div>
+        <div class="page-navigation">
+          <button
+            class="pagination-btn"
+            (click)="previousPage()"
+            [disabled]="currentPage === 1"
+          >
+            Anterior
+          </button>
+          <span>Página {{ currentPage }} de {{ totalPages }}</span>
+          <button
+            class="pagination-btn"
+            (click)="nextPage()"
+            [disabled]="currentPage === totalPages"
+          >
+            Próxima
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <ng-template #noHistory>
+      <p>Nenhuma transação encontrada no período.</p>
+    </ng-template>
+  </div>
+</div>

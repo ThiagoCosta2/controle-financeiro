@@ -1,0 +1,197 @@
+.reports-container {
+  padding: 2rem;
+  background-color: #f8f9fa;
+  height: 100%;
+  overflow-y: auto;
+}
+
+h1 {
+  font-size: 2rem;
+  font-weight: 600;
+  margin-bottom: 2rem;
+  color: #343a40;
+}
+
+.charts-section {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+  gap: 2rem;
+  margin-bottom: 3rem;
+}
+
+.chart-card {
+  background-color: #ffffff;
+  padding: 1.5rem;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* --- ESTILOS DO GRÁFICO CORRIGIDOS PARA TAMANHO UNIFORME --- */
+.chart-wrapper {
+  position: relative;
+  /* Define um tamanho fixo e agradável para os gráficos */
+  width: 220px;
+  height: 220px;
+  margin-bottom: 1.5rem;
+  display: flex; /* Adicionado */
+  justify-content: center; /* Adicionado */
+  align-items: center; /* Adicionado */
+}
+
+.chart-wrapper canvas {
+  max-width: 100%;
+  max-height: 100%;
+}
+/* --- FIM DA CORREÇÃO --- */
+
+.summary-text {
+  text-align: center;
+  font-size: 1rem;
+  color: #495057;
+}
+
+.summary-text p {
+  margin: 0.5rem 0;
+}
+
+.summary-text .balance {
+  font-size: 1.1rem;
+  font-weight: 600;
+}
+
+.balance.positive {
+  color: #28a745;
+}
+
+.balance.negative {
+  color: #dc3545;
+}
+
+.history-section {
+  background-color: #ffffff;
+  padding: 1.5rem;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+}
+
+.history-section h2 {
+  font-size: 1.5rem;
+  margin-bottom: 1.5rem;
+  color: #343a40;
+}
+
+.transactions-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  min-height: 200px;
+}
+
+.transaction-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem;
+  border-radius: 8px;
+  border-left: 5px solid;
+}
+
+.transaction-item.income {
+  background-color: #e9f5ec;
+  border-left-color: #28a745;
+}
+
+.transaction-item.expense {
+  background-color: #fbebed;
+  border-left-color: #dc3545;
+}
+
+.transaction-details {
+  display: flex;
+  flex-direction: column;
+}
+
+.transaction-description {
+  font-weight: 500;
+  color: #343a40;
+}
+
+.transaction-date {
+  font-size: 0.85rem;
+  color: #6c757d;
+}
+
+.transaction-value {
+  font-weight: 600;
+  font-size: 1.1rem;
+}
+
+.income .transaction-value {
+  color: #28a745;
+}
+
+.expense .transaction-value {
+  color: #dc3545;
+}
+
+.pagination-controls {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+  padding-top: 2rem;
+  gap: 1.5rem;
+  border-top: 1px solid #dee2e6;
+  margin-top: 1.5rem;
+}
+
+.items-per-page-selector,
+.page-navigation {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.items-per-page-selector label {
+  font-size: 0.9rem;
+  color: #495057;
+  white-space: nowrap;
+}
+
+.items-per-page-selector select {
+  padding: 0.4rem;
+  border-radius: 6px;
+  border: 1px solid #ced4da;
+  background-color: #fff;
+  font-size: 0.9rem;
+}
+
+.pagination-btn {
+  background-color: #007bff;
+  color: white;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 500;
+  transition: background-color 0.2s ease-in-out;
+}
+
+.pagination-btn:hover:not(:disabled) {
+  background-color: #0056b3;
+}
+
+.pagination-btn:disabled {
+  background-color: #6c757d;
+  cursor: not-allowed;
+  opacity: 0.7;
+}
+
+.page-navigation span {
+  font-size: 1rem;
+  color: #495057;
+  font-weight: 500;
+}

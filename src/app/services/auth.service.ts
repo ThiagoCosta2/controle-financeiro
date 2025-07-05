@@ -1,3 +1,7 @@
+// ATENÇÃO: O armazenamento de dados do usuário no localStorage
+// é inseguro e usado aqui apenas para fins de demonstração
+// em um ambiente sem backend. Em produção, toda a lógica de
+// autenticação e armazenamento deve ser gerenciada por um servidor seguro.
 import { Inject, Injectable, PLATFORM_ID } from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
 import { Router } from '@angular/router';
