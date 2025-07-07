@@ -1,37 +1,32 @@
-import { Routes } from '@angular/router';
+// src/app/app.routes.ts
 
-// Importe todos os seus componentes
+import { Routes } from '@angular/router';
 import { HomeComponent } from './components/home/home';
 import { LoginComponent } from './components/login/login';
 import { RegisterComponent } from './components/register/register';
 import { DashboardComponent } from './components/dashboard/dashboard';
-import { authGuard } from './guards/auth-guard';
-
-// Importe os componentes filhos do dashboard
 import { DashboardHomeComponent } from './components/dashboard-home/dashboard-home';
 import { TransactionsComponent } from './components/transactions/transactions';
-// Importando os componentes de Relatórios e Configurações
 import { ReportsComponent } from './components/reports/reports';
 import { SettingsComponent } from './components/settings/settings';
+import { authGuard } from './guards/auth-guard';
 
 export const routes: Routes = [
-  { path: 'home', component: HomeComponent },
+  { path: '', component: HomeComponent },
   { path: 'login', component: LoginComponent },
   { path: 'register', component: RegisterComponent },
-
   {
     path: 'dashboard',
     component: DashboardComponent,
-    canActivate: [authGuard],
+    canActivate: [authGuard], // Protege o acesso ao dashboard
     children: [
-      { path: '', component: DashboardHomeComponent },
+      { path: '', redirectTo: 'home', pathMatch: 'full' },
+      { path: 'home', component: DashboardHomeComponent },
       { path: 'transactions', component: TransactionsComponent },
-      // Adicionando as rotas para Relatórios e Configurações
       { path: 'reports', component: ReportsComponent },
       { path: 'settings', component: SettingsComponent },
     ],
   },
-
-  { path: '', redirectTo: 'home', pathMatch: 'full' },
-  { path: '**', redirectTo: 'home' },
+  // Redireciona qualquer outra rota para a página inicial
+  { path: '**', redirectTo: '' },
 ];

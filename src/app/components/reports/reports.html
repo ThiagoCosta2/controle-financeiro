@@ -1,20 +1,20 @@
 <div class="reports-container">
   <h1>Relatório Financeiro</h1>
 
-  <!-- Seção dos Gráficos -->
-  <div class="charts-section">
+  <section class="charts-section">
     <div class="chart-card">
-      <!-- Adicionado o 'chart-wrapper' para servir de molde -->
+      <h3 class="chart-title">Resumo do Mês Atual</h3>
       <div class="chart-wrapper">
         <canvas id="currentMonthChart"></canvas>
       </div>
       <div class="summary-text">
         <p>
-          <strong>Entradas (com saldo anterior):</strong>
-          {{ currentMonthIncome | currency : "BRL" }}
+          Entradas (c/ saldo ant.):
+          <span>{{ currentMonthIncome | currency : "BRL" }}</span>
         </p>
         <p>
-          <strong>Saídas:</strong> {{ currentMonthExpenses | currency : "BRL" }}
+          Saídas do Mês:
+          <span>{{ currentMonthExpenses | currency : "BRL" }}</span>
         </p>
         <p
           class="balance"
@@ -23,37 +23,35 @@
             negative: currentMonthBalance < 0
           }"
         >
-          <strong>Saldo do Mês:</strong>
-          {{ currentMonthBalance | currency : "BRL" }}
+          Saldo Final:
+          <strong>{{ currentMonthBalance | currency : "BRL" }}</strong>
         </p>
       </div>
     </div>
+
     <div class="chart-card">
-      <!-- Adicionado o 'chart-wrapper' para servir de molde -->
+      <h3 class="chart-title">Projeção de Despesas Futuras</h3>
       <div class="chart-wrapper">
         <canvas id="futureProjectionsChart"></canvas>
       </div>
       <div class="summary-text">
+        <p>Total de Despesas Agendadas:</p>
         <p>
-          <strong>Total de Despesas Futuras Agendadas:</strong>
-          {{ futureExpenses | currency : "BRL" }}
+          <strong>{{ futureExpenses | currency : "BRL" }}</strong>
         </p>
       </div>
     </div>
-  </div>
+  </section>
 
-  <!-- Seção do Histórico (sem alterações) -->
-  <div class="history-section">
-    <h2>Histórico de Transações (Últimos 3 Meses)</h2>
+  <section class="history-section">
+    <h2>Histórico de Transações</h2>
+
     <div *ngIf="allRecentTransactions.length > 0; else noHistory">
       <div class="transactions-list">
         <div
           *ngFor="let transaction of paginatedTransactions"
           class="transaction-item"
-          [ngClass]="{
-            income: transaction.type === 'income',
-            expense: transaction.type === 'expense'
-          }"
+          [ngClass]="transaction.type"
         >
           <div class="transaction-details">
             <span class="transaction-description">{{
@@ -69,19 +67,20 @@
         </div>
       </div>
 
-      <div class="pagination-controls" *ngIf="totalPages > 0">
+      <div class="pagination-controls">
         <div class="items-per-page-selector">
-          <label for="items-per-page">Itens por página:</label>
+          <label for="items-per-page">Itens por pág:</label>
           <select
             id="items-per-page"
-            (change)="onItemsPerPageChange($event)"
-            [value]="itemsPerPage"
+            [(ngModel)]="itemsPerPage"
+            (change)="onItemsPerPageChange()"
           >
             <option *ngFor="let option of itemsPerPageOptions" [value]="option">
               {{ option }}
             </option>
           </select>
         </div>
+
         <div class="page-navigation">
           <button
             class="pagination-btn"
@@ -103,7 +102,9 @@
     </div>
 
     <ng-template #noHistory>
-      <p>Nenhuma transação encontrada no período.</p>
+      <div class="no-transactions">
+        <p>Nenhum histórico de transações encontrado.</p>
+      </div>
     </ng-template>
-  </div>
+  </section>
 </div>

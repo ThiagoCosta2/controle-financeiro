@@ -46,24 +46,33 @@
     </div>
     <p
       *ngIf="areValuesVisible; else hiddenValue"
-      class="card-value saldo-positivo"
+      class="card-value"
+      [ngClass]="{
+        'saldo-positivo': saldoAtual >= 0,
+        'saldo-negativo': saldoAtual < 0
+      }"
     >
-      R$ 5.780,50
+      {{ saldoAtual | currency : "BRL" }}
     </p>
   </div>
+
   <div class="card">
     <h3 class="card-title">Receitas do Mês</h3>
-    <p *ngIf="areValuesVisible; else hiddenValue" class="card-value">
-      R$ 7.500,00
+    <p
+      *ngIf="areValuesVisible; else hiddenValue"
+      class="card-value saldo-positivo"
+    >
+      {{ receitasDoMes | currency : "BRL" }}
     </p>
   </div>
+
   <div class="card">
     <h3 class="card-title">Despesas do Mês</h3>
     <p
       *ngIf="areValuesVisible; else hiddenValue"
       class="card-value saldo-negativo"
     >
-      R$ 1.719,50
+      {{ despesasDoMes | currency : "BRL" }}
     </p>
   </div>
 </section>
@@ -74,30 +83,32 @@
 
 <section class="recent-transactions">
   <h2>Transações Recentes</h2>
-  <ul class="transaction-list">
-    <li class="transaction-item">
+  <ul
+    class="transaction-list"
+    *ngIf="transacoesRecentes.length > 0; else noTransactions"
+  >
+    <li *ngFor="let t of transacoesRecentes" class="transaction-item">
       <div class="transaction-details">
-        <span class="transaction-title">Salário Mensal</span>
-        <span class="transaction-category">Receita</span>
+        <span class="transaction-title">{{ t.description }}</span>
+        <span class="transaction-category">{{
+          t.date | date : "dd/MM/yyyy"
+        }}</span>
       </div>
       <span
         *ngIf="areValuesVisible; else hiddenAmount"
-        class="transaction-amount saldo-positivo"
-        >+ R$ 7.500,00</span
+        class="transaction-amount"
+        [ngClass]="{
+          'saldo-positivo': t.type === 'income',
+          'saldo-negativo': t.type === 'expense'
+        }"
       >
-    </li>
-    <li class="transaction-item">
-      <div class="transaction-details">
-        <span class="transaction-title">Aluguel</span>
-        <span class="transaction-category">Moradia</span>
-      </div>
-      <span
-        *ngIf="areValuesVisible; else hiddenAmount"
-        class="transaction-amount saldo-negativo"
-        >- R$ 1.200,00</span
-      >
+        {{ t.type === "income" ? "+" : "-" }} {{ t.value | currency : "BRL" }}
+      </span>
     </li>
   </ul>
+  <ng-template #noTransactions>
+    <p>Nenhuma transação recente encontrada.</p>
+  </ng-template>
 </section>
 
 <ng-template #hiddenAmount>

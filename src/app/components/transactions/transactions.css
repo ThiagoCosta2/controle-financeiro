@@ -1,5 +1,9 @@
 :host {
   display: block;
+}
+
+/* --- CABEÇALHO DA PÁGINA --- */
+.page-container {
   padding: 20px;
 }
 
@@ -33,6 +37,7 @@
   background-color: #2980b9;
 }
 
+/* --- LISTA DE TRANSAÇÕES --- */
 .transactions-container {
   background-color: #ffffff;
   border-radius: 8px;
@@ -40,19 +45,38 @@
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
 }
 
-.transactions-list .transaction-item {
+.transactions-list {
   display: flex;
-  align-items: center;
-  padding: 15px;
-  border-bottom: 1px solid #ecf0f1;
+  flex-direction: column;
+  gap: 0.75rem;
 }
 
-.transactions-list .transaction-item:last-child {
-  border-bottom: none;
+.transaction-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem;
+  border-radius: 8px;
+  border-left: 5px solid;
+  transition: box-shadow 0.2s ease-in-out;
+}
+
+.transaction-item:hover {
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.transaction-item.income {
+  background-color: #e9f5ec;
+  border-left-color: #28a745;
 }
 
 .transaction-item.income .transaction-value {
   color: #27ae60;
+}
+
+.transaction-item.expense {
+  background-color: #fbebed;
+  border-left-color: #dc3545;
 }
 
 .transaction-item.expense .transaction-value {
@@ -61,6 +85,8 @@
 
 .transaction-details {
   flex-grow: 1;
+  display: flex;
+  flex-direction: column;
 }
 
 .transaction-description {
@@ -69,20 +95,22 @@
 }
 
 .transaction-date {
-  font-size: 14px;
+  font-size: 0.85rem;
   color: #7f8c8d;
+  margin-top: 2px;
 }
 
 .transaction-value {
   font-weight: 600;
-  min-width: 120px;
+  font-size: 1.1rem;
+  min-width: 150px;
   text-align: right;
+  margin-right: 20px;
 }
 
 .transaction-actions {
   display: flex;
   gap: 10px;
-  margin-left: 20px;
 }
 
 .action-btn {
@@ -101,19 +129,18 @@
   padding: 40px;
   color: #7f8c8d;
 }
-.no-transactions p {
-  font-size: 18px;
-  margin-bottom: 10px;
-}
 
-/* Estilos para o Popup */
+/**************************************************/
+/* --- ESTILOS MODERNOS PARA TODOS OS POPUPS --- */
+/**************************************************/
+
 .popup-overlay {
   position: fixed;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
-  background-color: rgba(0, 0, 0, 0.6);
+  background-color: rgba(0, 0, 0, 0.65);
   display: flex;
   justify-content: center;
   align-items: center;
@@ -121,108 +148,107 @@
 }
 
 .popup-container {
-  background-color: #34495e; /* Fundo do popup alterado para o tom escuro */
-  color: #ecf0f1; /* Cor do texto principal do popup */
-  padding: 30px;
-  border-radius: 8px;
-  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+  background-color: #34495e;
+  color: #ecf0f1;
+  padding: 30px 40px;
+  border-radius: 12px;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.4);
   width: 100%;
   max-width: 500px;
 }
 
 .popup-container h3 {
+  text-align: center;
+  font-size: 22px;
   margin-top: 0;
   margin-bottom: 25px;
-  font-size: 22px;
-  text-align: center;
 }
 
+/* --- ESTILOS PARA FORMULÁRIOS NO POPUP --- */
 .form-group {
   margin-bottom: 20px;
+  text-align: left;
 }
 
 .form-group label {
   display: block;
   margin-bottom: 8px;
   font-weight: 600;
-  color: #bdc3c7; /* Cor mais suave para os labels */
+  color: #bdc3c7;
 }
 
-/* NOVA REGRA ATUALIZADA - Unifica os estilos dos inputs */
+/* REGRA UNIFICADA PARA TODOS OS INPUTS E SELECTS */
 .form-group input[type="text"],
 .form-group input[type="number"],
 .form-group input[type="date"],
 .form-group select {
   width: 100%;
   padding: 12px;
-  border: 1px solid #7f8c8d; /* Borda sutil */
-  background-color: #4a637b; /* Fundo do input */
-  border-radius: 4px;
+  border: 1px solid #7f8c8d;
+  background-color: #4a637b;
+  border-radius: 6px;
   box-sizing: border-box;
-  color: #ecf0f1; /* Cor do texto digitado */
+  color: #ecf0f1;
   font-size: 16px;
-  font-family: "Segoe UI", sans-serif; /* Fonte moderna */
   outline: none;
   transition: border-color 0.3s ease;
 }
 
-/* Efeito de foco para os inputs */
-.form-group input:focus,
-.form-group select:focus {
-  border-color: #3498db; /* Destaque ao focar */
+.form-group input::placeholder {
+  color: #95a5a6;
 }
 
-/* NOVO - Estiliza o ícone do calendário para branco */
+.form-group input:focus,
+.form-group select:focus {
+  border-color: #3498db;
+}
+
 .form-group input[type="date"]::-webkit-calendar-picker-indicator {
   filter: invert(1);
   cursor: pointer;
+}
+
+/* ESTILOS PARA CHECKBOXES */
+.checkbox-group {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  margin-top: 25px;
 }
 
 .checkbox-label {
   font-weight: normal;
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 10px;
   color: #ecf0f1;
+  cursor: pointer;
 }
 
-.type-selector {
-  display: flex;
-  gap: 20px;
-}
-.type-selector label {
-  font-weight: normal;
-  color: #ecf0f1;
+.checkbox-label input[type="checkbox"] {
+  width: 1.3em;
+  height: 1.3em;
+  accent-color: #3498db;
 }
 
+/* ESTILOS PARA BOTÕES DO POPUP */
 .popup-actions {
   display: flex;
   justify-content: flex-end;
-  gap: 10px;
-  margin-top: 30px; /* Mais espaço acima dos botões */
+  gap: 15px;
+  margin-top: 30px;
 }
 
 .btn-primary,
 .btn-secondary,
 .btn-danger {
   border: none;
-  padding: 10px 20px;
-  border-radius: 4px;
+  padding: 12px 25px;
+  border-radius: 8px;
   cursor: pointer;
   font-weight: bold;
-  transition: background-color 0.3s;
-}
-
-.btn-primary {
-  background-color: #3498db;
-  color: white;
-}
-.btn-primary:hover {
-  background-color: #2980b9;
-}
-.btn-primary:disabled {
-  background-color: #7f8c8d;
-  cursor: not-allowed;
+  font-size: 16px;
+  transition: all 0.2s ease-in-out;
 }
 
 .btn-secondary {
@@ -231,12 +257,63 @@
 }
 .btn-secondary:hover {
   background-color: #95a5a6;
+  transform: translateY(-2px);
 }
 
+.btn-primary {
+  background-color: #3498db;
+  color: white;
+}
+.btn-primary:hover {
+  background-color: #2980b9;
+  transform: translateY(-2px);
+}
+.btn-primary:disabled {
+  background-color: #5b6e7f;
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* ESTILOS PARA O POPUP DE EXCLUSÃO */
+.popup-container.confirm-dialog {
+  max-width: 450px;
+  text-align: center;
+}
+.confirm-dialog .popup-actions {
+  justify-content: center;
+}
+.popup-title-with-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+}
+.popup-title-with-icon svg {
+  color: #f1c40f;
+}
+.popup-message {
+  font-size: 16px;
+  color: #bdc3c7;
+  line-height: 1.5;
+}
+.popup-warning {
+  font-size: 14px;
+  font-weight: bold;
+  color: #f1c40f;
+  margin-top: -10px;
+  margin-bottom: 25px;
+}
 .btn-danger {
   background-color: #e74c3c;
   color: white;
 }
 .btn-danger:hover {
   background-color: #c0392b;
+  transform: translateY(-2px);
+}
+
+fieldset {
+  border: none;
+  padding: 0;
+  margin: 0;
 }
