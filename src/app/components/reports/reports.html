@@ -1,110 +1,103 @@
 <div class="reports-container">
-  <h1>Relatório Financeiro</h1>
+  <div class="header">
+    <h1>Relatório Financeiro</h1>
+    <p>Uma visão clara das suas finanças.</p>
+  </div>
 
-  <section class="charts-section">
-    <div class="chart-card">
-      <h3 class="chart-title">Resumo do Mês Atual</h3>
-      <div class="chart-wrapper">
-        <canvas id="currentMonthChart"></canvas>
+  <div class="row">
+    <div class="card chart-card">
+      <canvas id="incomeChartCanvas"></canvas>
+    </div>
+    <div class="card chart-card">
+      <canvas id="expenseChartCanvas"></canvas>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="card projection-card">
+      <div class="card-header">
+        <h3>Lançamentos para o Próximo Mês</h3>
+        <button class="icon-button" (click)="toggleBalanceVisibility()">
+          <i
+            class="fas"
+            [ngClass]="isBalanceVisible ? 'fa-eye-slash' : 'fa-eye'"
+          ></i>
+        </button>
       </div>
-      <div class="summary-text">
-        <p>
-          Entradas (c/ saldo ant.):
-          <span>{{ currentMonthIncome | currency : "BRL" }}</span>
-        </p>
-        <p>
-          Saídas do Mês:
-          <span>{{ currentMonthExpenses | currency : "BRL" }}</span>
-        </p>
-        <p
-          class="balance"
-          [ngClass]="{
-            positive: currentMonthBalance >= 0,
-            negative: currentMonthBalance < 0
-          }"
+      <div class="total-projection">
+        <span>Total Previsto:</span>
+        <span *ngIf="isBalanceVisible" class="amount">{{
+          nextMonthTotal | currency : "BRL"
+        }}</span>
+        <span *ngIf="!isBalanceVisible" class="amount">R$ ••••••</span>
+      </div>
+      <ul class="projection-list">
+        <li *ngIf="nextMonthExpenses.length === 0" class="no-items">
+          Nenhuma despesa prevista.
+        </li>
+        <li *ngFor="let expense of nextMonthExpenses" class="projection-item">
+          <span>{{ expense.description }}</span>
+          <span class="amount" *ngIf="isBalanceVisible">{{
+            expense.value | currency : "BRL"
+          }}</span>
+          <span class="amount" *ngIf="!isBalanceVisible">R$ ••••••</span>
+        </li>
+      </ul>
+    </div>
+
+    <div class="card history-card">
+      <div class="section-header">
+        <h3>Histórico de Transações</h3>
+        <select
+          class="items-per-page-select"
+          [(ngModel)]="itemsPerPage"
+          (change)="onItemsPerPageChange()"
         >
-          Saldo Final:
-          <strong>{{ currentMonthBalance | currency : "BRL" }}</strong>
-        </p>
+          <option *ngFor="let option of itemsPerPageOptions" [value]="option">
+            {{ option }} por página
+          </option>
+        </select>
+      </div>
+
+      <table class="transaction-table">
+        <thead>
+          <tr>
+            <th>Descrição</th>
+            <th class="text-right">Valor</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr
+            *ngFor="let transaction of paginatedTransactions"
+            [ngClass]="transaction.type"
+          >
+            <td>
+              <span class="description">{{ transaction.description }}</span>
+              <span class="date">{{
+                transaction.date | date : "dd/MM/yyyy"
+              }}</span>
+            </td>
+            <td class="text-right transaction-value">
+              {{ transaction.value | currency : "BRL" }}
+            </td>
+          </tr>
+          <tr *ngIf="transactionHistory.length === 0">
+            <td colspan="2" class="no-items">
+              Nenhuma transação no histórico.
+            </td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="pagination-controls" *ngIf="totalPages > 1">
+        <button (click)="previousPage()" [disabled]="currentPage === 1">
+          Anterior
+        </button>
+        <span>Página {{ currentPage }} de {{ totalPages }}</span>
+        <button (click)="nextPage()" [disabled]="currentPage === totalPages">
+          Próxima
+        </button>
       </div>
     </div>
-
-    <div class="chart-card">
-      <h3 class="chart-title">Projeção de Despesas Futuras</h3>
-      <div class="chart-wrapper">
-        <canvas id="futureProjectionsChart"></canvas>
-      </div>
-      <div class="summary-text">
-        <p>Total de Despesas Agendadas:</p>
-        <p>
-          <strong>{{ futureExpenses | currency : "BRL" }}</strong>
-        </p>
-      </div>
-    </div>
-  </section>
-
-  <section class="history-section">
-    <h2>Histórico de Transações</h2>
-
-    <div *ngIf="allRecentTransactions.length > 0; else noHistory">
-      <div class="transactions-list">
-        <div
-          *ngFor="let transaction of paginatedTransactions"
-          class="transaction-item"
-          [ngClass]="transaction.type"
-        >
-          <div class="transaction-details">
-            <span class="transaction-description">{{
-              transaction.description
-            }}</span>
-            <span class="transaction-date">{{
-              transaction.date | date : "dd/MM/yyyy"
-            }}</span>
-          </div>
-          <div class="transaction-value">
-            {{ transaction.value | currency : "BRL" }}
-          </div>
-        </div>
-      </div>
-
-      <div class="pagination-controls">
-        <div class="items-per-page-selector">
-          <label for="items-per-page">Itens por pág:</label>
-          <select
-            id="items-per-page"
-            [(ngModel)]="itemsPerPage"
-            (change)="onItemsPerPageChange()"
-          >
-            <option *ngFor="let option of itemsPerPageOptions" [value]="option">
-              {{ option }}
-            </option>
-          </select>
-        </div>
-
-        <div class="page-navigation">
-          <button
-            class="pagination-btn"
-            (click)="previousPage()"
-            [disabled]="currentPage === 1"
-          >
-            Anterior
-          </button>
-          <span>Página {{ currentPage }} de {{ totalPages }}</span>
-          <button
-            class="pagination-btn"
-            (click)="nextPage()"
-            [disabled]="currentPage === totalPages"
-          >
-            Próxima
-          </button>
-        </div>
-      </div>
-    </div>
-
-    <ng-template #noHistory>
-      <div class="no-transactions">
-        <p>Nenhum histórico de transações encontrado.</p>
-      </div>
-    </ng-template>
-  </section>
+  </div>
 </div>

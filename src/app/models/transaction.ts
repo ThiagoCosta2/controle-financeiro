@@ -1,11 +1,14 @@
 export interface Transaction {
   id: string;
-  username: string;
-  type: 'income' | 'expense'; // PADRÃO: Usaremos 'income' para Receita e 'expense' para Despesa
+  userId: string;
+  type: 'income' | 'expense';
+  value: number;
   description: string;
-  value: number; // PADRÃO: A propriedade para o valor monetário é 'value'
-  date: string; // Formato YYYY-MM-DD
   category?: string;
-  installments?: number;
+  date: string;
   isRecurring?: boolean;
+  recurrence?: 'daily' | 'weekly' | 'monthly' | 'yearly';
+  installments?: number;
+  currentInstallment?: number;
+  originalId?: string;
 }

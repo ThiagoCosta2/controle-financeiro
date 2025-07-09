@@ -1,190 +1,201 @@
+/* ARQUIVO: src/app/components/reports/reports.css */
+
 :host {
   display: block;
+  padding: 2rem;
+  background-color: #f4f7fa;
 }
 
 .reports-container {
-  padding: 20px;
+  max-width: 1200px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
 }
 
-h1 {
-  font-size: 24px;
-  color: #34495e;
-  margin-bottom: 24px;
+.header {
+  margin-bottom: 0.5rem;
 }
 
-/* --- ESTILOS MODERNOS PARA OS GRÁFICOS --- */
-.charts-section {
+.header h1 {
+  margin: 0;
+  font-size: 1.8rem;
+  color: #343a40;
+}
+
+.header p {
+  margin-top: 0.25rem;
+  color: #6c757d;
+}
+
+.row {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
-  gap: 2rem;
-  margin-bottom: 3rem;
+  grid-template-columns: 1fr 1fr; /* Duas colunas de mesmo tamanho */
+  gap: 1.5rem;
 }
 
-.chart-card {
+.card {
   background-color: #ffffff;
   padding: 1.5rem;
   border-radius: 12px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-  display: flex;
-  flex-direction: column;
-  align-items: center;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
 }
 
-.chart-title {
-  font-size: 18px;
-  font-weight: 600;
-  color: #34495e;
-  margin-top: 0;
-  margin-bottom: 1.5rem;
-}
-
-.chart-wrapper {
-  position: relative;
-  width: 220px; /* Tamanho consistente para os gráficos */
-  height: 220px;
-  margin-bottom: 1.5rem;
-}
-
-.summary-text {
-  text-align: center;
-  font-size: 1rem;
-  color: #495057;
-}
-
-.summary-text p {
-  margin: 0.5rem 0;
-}
-
-.summary-text .balance {
-  font-size: 1.2rem;
-  font-weight: bold;
-  margin-top: 1rem;
-}
-
-.balance.positive {
-  color: #27ae60;
-}
-.balance.negative {
-  color: #c0392b;
-}
-
-/* --- ESTILOS MODERNOS PARA O HISTÓRICO --- */
-.history-section {
-  background-color: #ffffff;
-  padding: 20px;
-  border-radius: 8px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-}
-
-.history-section h2 {
-  font-size: 20px;
-  color: #34495e;
-  margin-top: 0;
-  margin-bottom: 1.5rem;
-}
-
-/* Reutilizando os estilos da lista de transações */
-.transactions-list {
-  display: flex;
-  flex-direction: column;
-  gap: 0.75rem;
-}
-
-.transaction-item {
+.card-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 1rem;
-  border-radius: 8px;
-  border-left: 5px solid;
+  width: 100%;
 }
 
-.transaction-item.income {
-  background-color: #e9f5ec;
-  border-left-color: #28a745;
-}
-.transaction-item.expense {
-  background-color: #fbebed;
-  border-left-color: #dc3545;
+.card-header h3 {
+  margin: 0;
+  font-size: 1.1rem;
+  color: #343a40;
 }
 
-.transaction-details {
+.icon-button {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  color: #adb5bd;
+  font-size: 1.2rem;
+}
+
+/* Gráficos */
+.chart-card {
+  min-height: 350px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Card de Projeção */
+.projection-card .total-projection {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  font-size: 1rem;
+  color: #6c757d;
+  padding-bottom: 0.75rem;
+  margin: 1rem 0;
+  border-bottom: 1px solid #e9ecef;
+}
+.projection-card .total-projection .amount {
+  font-weight: 700;
+  font-size: 1.2rem;
+  color: #343a40;
+}
+
+.projection-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  max-height: 250px; /* Altura máxima antes de rolar */
+  overflow-y: auto;
+}
+.projection-item {
+  display: flex;
+  justify-content: space-between;
+  padding: 0.6rem 0.2rem;
+  font-size: 0.9rem;
+}
+.projection-item .amount {
+  font-weight: 500;
+}
+
+/* Card de Histórico */
+.history-card {
   display: flex;
   flex-direction: column;
 }
-
-.transaction-description {
-  font-weight: 600;
-  color: #34495e;
-}
-.transaction-date {
-  font-size: 0.85rem;
-  color: #7f8c8d;
-}
-.transaction-value {
-  font-weight: 600;
-  font-size: 1.1rem;
-}
-.income .transaction-value {
-  color: #27ae60;
-}
-.expense .transaction-value {
-  color: #c0392b;
+.history-card .section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid #e9ecef;
 }
 
-.no-transactions {
+.transaction-table {
+  width: 100%;
+  border-collapse: collapse;
+  flex-grow: 1; /* Faz a tabela ocupar o espaço disponível */
+}
+
+.transaction-table th,
+.transaction-table td {
+  padding: 0.75rem;
+  text-align: left;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.transaction-table thead th {
+  font-weight: 600;
+  font-size: 0.8rem;
+  color: #6c757d;
+  text-transform: uppercase;
+}
+.transaction-table tbody tr:last-child td {
+  border-bottom: none;
+}
+.transaction-table .text-right {
+  text-align: right;
+}
+
+.transaction-table .description {
+  display: block;
+  font-weight: 500;
+}
+.transaction-table .date {
+  font-size: 0.8rem;
+  color: #6c757d;
+}
+
+.transaction-table .transaction-value {
+  font-weight: 600;
+}
+.transaction-table tr.income .transaction-value {
+  color: #198754;
+}
+.transaction-table tr.expense .transaction-value {
+  color: #dc3545;
+}
+
+.no-items {
   text-align: center;
-  padding: 40px;
-  color: #7f8c8d;
+  padding: 2rem;
+  color: #adb5bd;
 }
 
-/* --- ESTILOS MODERNOS PARA A PAGINAÇÃO --- */
+/* Controles de Paginação */
 .pagination-controls {
   display: flex;
-  flex-wrap: wrap;
-  justify-content: space-between;
+  justify-content: center;
   align-items: center;
+  gap: 0.75rem;
+  margin-top: auto; /* Empurra para o final do card */
   padding-top: 1.5rem;
-  margin-top: 1.5rem;
-  border-top: 1px solid #e9ecef;
 }
-
-.items-per-page-selector,
-.page-navigation {
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-}
-
-.items-per-page-selector label {
-  font-size: 0.9rem;
-  color: #495057;
-}
-
-.items-per-page-selector select {
-  padding: 8px 12px;
+.items-per-page-select {
+  padding: 0.4rem;
+  border: 1px solid #dee2e6;
   border-radius: 6px;
-  border: 1px solid #ced4da;
-  background-color: #fff;
-  font-size: 0.9rem;
+  font-size: 0.8rem;
 }
-
-.pagination-btn {
-  background-color: #3498db;
-  color: white;
-  border: none;
-  padding: 8px 16px;
+.pagination-controls button {
+  padding: 0.4rem 0.8rem;
+  border: 1px solid #dee2e6;
+  background-color: white;
   border-radius: 6px;
   cursor: pointer;
-  font-weight: 500;
-  transition: background-color 0.2s ease-in-out;
 }
-
-.pagination-btn:hover:not(:disabled) {
-  background-color: #2980b9;
-}
-
-.pagination-btn:disabled {
-  background-color: #bdc3c7;
+.pagination-controls button:disabled {
   cursor: not-allowed;
+  opacity: 0.5;
+}
+.pagination-controls span {
+  font-size: 0.9rem;
+  color: #6c757d;
 }

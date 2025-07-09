@@ -6,29 +6,31 @@ import {
   ReactiveFormsModule,
 } from '@angular/forms';
 import { CommonModule } from '@angular/common';
-import { Transaction } from '../../models/transaction';
-import { FinanceService } from '../../services/finance.service'; // MUDANÇA: Usar o FinanceService
+import { Transaction } from '../../models/transaction'; // Verifique se a importação está correta
+import { FinanceService } from '../../services/finance.service';
 import { AuthService } from '../../services/auth.service';
 
 @Component({
   selector: 'app-transactions',
   standalone: true,
   imports: [CommonModule, ReactiveFormsModule],
-  templateUrl: './transactions.html',
-  styleUrls: ['./transactions.css'],
+  templateUrl: './transactions.html', // Garanta que o nome do seu arquivo HTML é este
+  styleUrls: ['./transactions.css'], // Garanta que o nome do seu arquivo CSS é este
 })
 export class TransactionsComponent implements OnInit {
   transactionForm: FormGroup;
-  transactions: Transaction[] = []; // Manter uma lista local para exibição na página
+  transactions: Transaction[] = []; // Lista para exibir as transações na tela
+
+  // Propriedade para controlar a visibilidade do modal/formulário
+  isModalOpen = false;
 
   constructor(
     private fb: FormBuilder,
-    private financeService: FinanceService, // MUDANÇA: Injetar o FinanceService
+    private financeService: FinanceService,
     private authService: AuthService
   ) {
+    // A construção do formulário acontece aqui uma única vez
     this.transactionForm = this.fb.group({
-      id: [null],
-      // CORREÇÃO: O valor inicial do formulário agora é 'expense'
       type: ['expense', Validators.required],
       description: ['', Validators.required],
       value: [null, [Validators.required, Validators.min(0.01)]],
@@ -40,27 +42,42 @@ export class TransactionsComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    // Poderíamos nos inscrever aqui para exibir a lista de transações se necessário
+    this.loadTransactions(); // Carrega as transações ao iniciar o componente
   }
 
+  /**
+   * Carrega as transações do usuário para exibição na tela.
+   */
+  loadTransactions(): void {
+    // Usamos o generateEffectiveTransactions para ter a visão mais completa
+    this.transactions = this.financeService
+      .generateEffectiveTransactions()
+      .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+  }
+
+  /**
+   * Método único para lidar com a submissão do formulário.
+   */
   onSubmit(): void {
     if (this.transactionForm.invalid) {
+      // Marcar campos como "tocados" para exibir mensagens de erro no HTML
+      this.transactionForm.markAllAsTouched();
       return;
     }
 
     const currentUser = this.authService.getCurrentUser();
     if (!currentUser) {
-      // Idealmente, mostrar uma mensagem de erro para o usuário
-      console.error('Usuário não encontrado!');
+      alert('Erro: Usuário não autenticado.'); // Substituir por notificação
       return;
     }
 
     const formValue = this.transactionForm.value;
 
     const newTransaction: Transaction = {
-      id: formValue.id || new Date().getTime().toString(), // Gera um ID simples
-      username: currentUser.username,
-      type: formValue.type, // O valor já será 'income' ou 'expense' vindo do HTML
+      id: new Date().getTime().toString(),
+      // CORREÇÃO: Usando 'userId' como definido no modelo
+      userId: currentUser.id,
+      type: formValue.type,
       description: formValue.description,
       value: parseFloat(formValue.value),
       date: formValue.date,
@@ -69,14 +86,24 @@ export class TransactionsComponent implements OnInit {
       isRecurring: formValue.isRecurring,
     };
 
-    // MUDANÇA: Usar o FinanceService para adicionar a transação
-    // Isso vai salvar a transação E recalcular tudo automaticamente
+    // O FinanceService lida com a lógica de salvar a transação
     this.financeService.addTransaction(newTransaction);
 
+    this.closeModal(); // Fecha o formulário
+    this.loadTransactions(); // Atualiza a lista na tela
+  }
+
+  // Funções para controlar o modal (formulário)
+  openModal(): void {
+    this.isModalOpen = true;
     this.transactionForm.reset({
       type: 'expense',
       installments: 1,
       isRecurring: false,
     });
+  }
+
+  closeModal(): void {
+    this.isModalOpen = false;
   }
 }

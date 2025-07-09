@@ -1,6 +1,8 @@
+// ARQUIVO: src/app/models/user.model.ts
+
 export interface User {
-  name: string;
+  id: string;
+  username: string;
   email: string;
-  username: string; // Esta é a propriedade que estava faltando
-  password?: string; // O '?' torna a senha opcional, já que não queremos armazená-la sempre
+  password?: string; // A senha é a propriedade que guardamos
 }

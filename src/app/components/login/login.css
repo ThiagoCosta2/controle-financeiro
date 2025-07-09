@@ -1,84 +1,111 @@
-/* Container principal que centraliza o formulário na tela */
+/* ARQUIVO: src/app/components/login/login.css */
+
+:host {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+  background-color: #34495e; /* Fundo azul-escuro */
+}
+
 .login-container {
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 100vh; /* Ocupa a altura inteira da tela */
-  background-color: #2c3e50; /* Um fundo escuro, ajuste se necessário */
-}
-
-/* O formulário em si */
-form {
-  display: flex;
-  flex-direction: column; /* Organiza os itens em coluna */
-  gap: 15px; /* Espaçamento entre os itens do formulário */
-  padding: 40px;
-  background-color: #34495e; /* Cor do card do formulário */
-  border-radius: 8px;
   width: 100%;
-  max-width: 400px; /* Largura máxima do formulário */
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
 }
 
-/* Estilo do título "Acessar Sistema" */
-h2 {
-  color: #ecf0f1;
+.login-box {
+  background-color: #2c3e50; /* Card um pouco mais claro */
+  padding: 2.5rem 3rem;
+  border-radius: 12px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+  width: 100%;
+  max-width: 400px;
   text-align: center;
-  margin-bottom: 10px;
-  font-family: sans-serif; /* Use a fonte do seu projeto */
+  color: #ecf0f1; /* Texto claro */
 }
 
-/* Estilo dos campos de input */
-input {
-  padding: 12px;
+.login-box h2 {
+  margin-top: 0;
+  margin-bottom: 2rem;
+  font-weight: 500;
+  font-size: 1.8rem;
+}
+
+.success-banner {
+  background-color: rgba(40, 167, 69, 0.1);
+  color: #28a745;
+  padding: 1rem;
+  border-radius: 8px;
+  margin-bottom: 1.5rem;
+  font-size: 0.9rem;
+  border: 1px solid rgba(40, 167, 69, 0.2);
+}
+
+.input-group {
+  position: relative;
+  margin-bottom: 1.5rem;
+}
+
+.input-group i {
+  position: absolute;
+  left: 15px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #95a5a6;
+}
+
+.input-group input {
+  width: 100%;
+  padding: 1rem 1rem 1rem 3rem; /* Espaço para o ícone */
   border: 1px solid #7f8c8d;
-  background-color: #4a637b;
-  border-radius: 4px;
+  border-radius: 8px;
+  background-color: #34495e;
   color: #ecf0f1;
-  font-size: 16px;
+  font-size: 1rem;
+  box-sizing: border-box;
+  transition: border-color 0.2s;
 }
 
-input::placeholder {
-  color: #bdc3c7;
+.input-group input::placeholder {
+  color: #95a5a6;
 }
 
-/* Botão principal de "Entrar" */
-.btn-primary {
-  padding: 12px;
+.input-group input:focus {
+  outline: none;
+  border-color: #3498db;
+}
+
+.login-btn {
+  width: 100%;
+  padding: 1rem;
+  background-color: #3498db; /* Azul */
   border: none;
-  background-color: #3498db; /* Azul do botão */
+  border-radius: 8px;
   color: white;
-  font-size: 16px;
-  border-radius: 4px;
+  font-size: 1.1rem;
+  font-weight: 600;
   cursor: pointer;
-  transition: background-color 0.3s ease;
+  transition: background-color 0.2s;
+  margin-top: 1rem;
 }
 
-.btn-primary:hover {
+.login-btn:hover {
   background-color: #2980b9;
 }
 
-/* Link "Criar Conta" */
-.link-criar-conta {
+.links {
+  margin-top: 1.5rem;
+}
+
+.links a {
   color: #bdc3c7;
-  text-align: center; /* Centraliza o texto do link */
   text-decoration: none;
-  font-family: sans-serif; /* Use a fonte do seu projeto */
-  cursor: pointer;
-  transition: color 0.3s ease;
+  font-size: 0.9rem;
+  transition: color 0.2s;
 }
 
-.link-criar-conta:hover {
-  color: #ffffff;
-}
-
-/* Adicione este estilo no final do seu arquivo login.css */
-.success-message {
-  padding: 15px;
-  margin-bottom: 20px;
-  border-radius: 4px;
-  color: #155724; /* Verde escuro para o texto */
-  background-color: #d4edda; /* Fundo verde claro */
-  border: 1px solid #c3e6cb;
-  text-align: center;
+.links a:hover {
+  color: #ecf0f1;
 }

@@ -21,7 +21,7 @@ export class TransactionService {
 
   private getStorageKey(): string {
     const user = this.authService.getCurrentUser();
-    return user ? `${this.TRANSACTIONS_KEY_PREFIX}${user.usuario}` : '';
+    return user ? `${this.TRANSACTIONS_KEY_PREFIX}${user.username}` : ''; // Propriedade corrigida
   }
 
   getTransactions(): Transaction[] {

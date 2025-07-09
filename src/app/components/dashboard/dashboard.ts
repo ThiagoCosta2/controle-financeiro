@@ -6,7 +6,8 @@ import {
   RouterLink,
   RouterLinkActive,
 } from '@angular/router';
-import { AuthService, User } from '../../services/auth.service';
+import { AuthService } from '../../services/auth.service';
+import { User } from '../../models/user.model'; // A importação de User vem do modelo
 
 @Component({
   selector: 'app-dashboard',
@@ -24,7 +25,7 @@ export class DashboardComponent implements OnInit {
   ngOnInit(): void {
     const currentUser: User | null = this.authService.getCurrentUser();
     if (currentUser) {
-      this.userName = currentUser.nome.split(' ')[0];
+      this.userName = currentUser.username.split(' ')[0]; // Apenas troque .nome por .usernamethis.userName = currentUser.username.split(' ')[0]; // Apenas troque .nome por .username
     }
   }
 

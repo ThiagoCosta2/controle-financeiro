@@ -1,99 +1,123 @@
-// ATENÇÃO: O armazenamento de dados do usuário no localStorage
-// é inseguro e usado aqui apenas para fins de demonstração
-// em um ambiente sem backend. Em produção, toda a lógica de
-// autenticação e armazenamento deve ser gerenciada por um servidor seguro.
-import { Inject, Injectable, PLATFORM_ID } from '@angular/core';
+// ARQUIVO: src/app/services/auth.service.ts
+
+import { Injectable, Inject, PLATFORM_ID } from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
 import { Router } from '@angular/router';
-
-export interface User {
-  username: string;
-  balance: number;
-  nome: string;
-  email: string;
-  usuario: string;
-  senha?: string; // Senha é opcional aqui, pois não a retornamos sempre
-}
+import { User } from '../models/user.model';
+import { NotificationService } from './notification.service'; // Importe o serviço de notificação
 
 @Injectable({
   providedIn: 'root',
 })
 export class AuthService {
-  private readonly USERS_KEY = 'financial_app_users';
-  private readonly LOGGED_IN_USER_KEY = 'financial_app_session';
+  private USERS_KEY = 'financial_app_users';
+  private SESSION_KEY = 'financial_app_session';
   private isBrowser: boolean;
 
   constructor(
+    @Inject(PLATFORM_ID) private platformId: object,
     private router: Router,
-    @Inject(PLATFORM_ID) private platformId: object
+    private notificationService: NotificationService // Injete o serviço
   ) {
     this.isBrowser = isPlatformBrowser(this.platformId);
   }
 
-  register(userData: User): boolean {
-    if (!this.isBrowser) return false;
+  // --- LÓGICA DE LOGIN CORRIGIDA ---
+  login(credentials: { email: string; pass: string }): boolean {
+    const users = this.getUsers();
 
-    const users = this.getUsersFromStorage();
-    const userExists = users.some(
-      (u) => u.usuario === userData.usuario || u.email === userData.email
+    // CORREÇÃO: Compara credentials.pass com u.password
+    const user = users.find(
+      (u) => u.email === credentials.email && u.password === credentials.pass
     );
 
-    if (userExists) {
-      alert('Erro: Usuário ou e-mail já cadastrado.');
-      return false;
-    }
-
-    users.push(userData);
-    this.saveUsersToStorage(users);
-    return true;
-  }
-
-  login(credentials: any): boolean {
-    if (!this.isBrowser) return false;
-
-    const users = this.getUsersFromStorage();
-    const foundUser = users.find(
-      (u) => u.usuario === credentials.usuario && u.senha === credentials.senha
-    );
-
-    if (foundUser) {
-      localStorage.setItem(this.LOGGED_IN_USER_KEY, JSON.stringify(foundUser));
+    if (user) {
+      if (this.isBrowser) {
+        // Remove a senha antes de salvar na sessão por segurança
+        const { password, ...userToStore } = user;
+        localStorage.setItem(this.SESSION_KEY, JSON.stringify(userToStore));
+      }
       return true;
     }
 
-    alert('Usuário ou senha inválidos.');
+    // Se o login falhar, mostra uma notificação
+    this.notificationService.show('Email ou senha inválidos.', 'error');
     return false;
+  }
+
+  // ... resto dos seus métodos (register, logout, etc.) ...
+
+  register(user: User): boolean {
+    const users = this.getUsers();
+    const userExists = users.some((u) => u.email === user.email);
+    if (userExists) {
+      this.notificationService.show('Este email já está cadastrado.', 'error');
+      return false;
+    }
+    users.push(user);
+    this.saveUsers(users);
+    return true;
   }
 
   logout(): void {
     if (this.isBrowser) {
-      localStorage.removeItem(this.LOGGED_IN_USER_KEY);
-      this.router.navigate(['/home']);
+      localStorage.removeItem(this.SESSION_KEY);
     }
+    this.router.navigate(['/login']);
   }
 
   isAuthenticated(): boolean {
-    if (!this.isBrowser) return false;
-    return localStorage.getItem(this.LOGGED_IN_USER_KEY) !== null;
+    return this.getCurrentUser() !== null;
   }
 
-  // 2. MÉTODO ATUALIZADO PARA RETORNAR O TIPO 'User'
   getCurrentUser(): User | null {
     if (!this.isBrowser) return null;
-
-    const user = localStorage.getItem(this.LOGGED_IN_USER_KEY);
-    return user ? JSON.parse(user) : null;
+    const userJson = localStorage.getItem(this.SESSION_KEY);
+    return userJson ? JSON.parse(userJson) : null;
   }
 
-  private getUsersFromStorage(): User[] {
-    if (!this.isBrowser) return [];
-    const users = localStorage.getItem(this.USERS_KEY);
-    return users ? JSON.parse(users) : [];
-  }
+  updateUser(updatedUser: User): boolean {
+    const users = this.getUsers();
+    const userIndex = users.findIndex((u) => u.id === updatedUser.id);
+    if (userIndex === -1) return false;
 
-  private saveUsersToStorage(users: User[]): void {
+    const userInDb = users[userIndex];
+    userInDb.username = updatedUser.username; // Atualiza o nome de usuário
+
+    this.saveUsers(users);
+
     if (this.isBrowser) {
-      localStorage.setItem(this.USERS_KEY, JSON.stringify(users));
+      const { password, ...userToStore } = userInDb;
+      localStorage.setItem(this.SESSION_KEY, JSON.stringify(userToStore));
     }
+    return true;
+  }
+
+  changePassword(currentPassword: string, newPassword: string): boolean {
+    const currentUser = this.getCurrentUser();
+    if (!currentUser) return false;
+
+    const users = this.getUsers();
+    const userInDb = users.find((u) => u.id === currentUser.id);
+
+    if (!userInDb || userInDb.password !== currentPassword) {
+      this.notificationService.show('A senha atual está incorreta.', 'error');
+      return false;
+    }
+
+    userInDb.password = newPassword;
+    this.saveUsers(users);
+    return true;
+  }
+
+  private getUsers(): User[] {
+    if (!this.isBrowser) return [];
+    const usersJson = localStorage.getItem(this.USERS_KEY);
+    return usersJson ? JSON.parse(usersJson) : [];
+  }
+
+  private saveUsers(users: User[]): void {
+    if (!this.isBrowser) return;
+    localStorage.setItem(this.USERS_KEY, JSON.stringify(users));
   }
 }
