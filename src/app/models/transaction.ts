@@ -1,13 +1,11 @@
-// src/app/models/transaction.ts
-
 export interface Transaction {
   id: string;
+  username: string;
+  type: 'income' | 'expense'; // PADRÃO: Usaremos 'income' para Receita e 'expense' para Despesa
   description: string;
-  value: number;
-  date: string; // Manter como string para corresponder ao formulário
-  type: 'income' | 'expense';
+  value: number; // PADRÃO: A propriedade para o valor monetário é 'value'
+  date: string; // Formato YYYY-MM-DD
   category?: string;
-  isFixed?: boolean;
   installments?: number;
   isRecurring?: boolean;
 }

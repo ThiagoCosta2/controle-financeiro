@@ -1,20 +1,18 @@
-<div class="home-header">
-  <h2>Visão Geral</h2>
-  <button class="btn-add-transaction" (click)="goToAddTransaction()">
-    + Adicionar Transação
-  </button>
-</div>
-
-<section class="kpi-cards">
-  <div class="card">
-    <div class="card-header">
-      <h3 class="card-title">Saldo Atual</h3>
-      <button class="visibility-btn" (click)="toggleValuesVisibility()">
+<div class="container" *ngIf="summary$ | async as summary">
+  <!-- Cabeçalho da seção -->
+  <div class="section-header">
+    <h1>Dashboard</h1>
+    <div class="actions">
+      <button
+        class="icon-btn"
+        (click)="toggleBalanceVisibility()"
+        title="Mostrar/Ocultar valores"
+      >
         <svg
-          *ngIf="areValuesVisible"
+          *ngIf="isBalanceVisible"
           xmlns="http://www.w3.org/2000/svg"
-          width="20"
-          height="20"
+          width="24"
+          height="24"
           viewBox="0 0 24 24"
           fill="none"
           stroke="currentColor"
@@ -22,14 +20,14 @@
           stroke-linecap="round"
           stroke-linejoin="round"
         >
-          <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
-          <circle cx="12" cy="12" r="3"></circle>
+          <path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z" />
+          <circle cx="12" cy="12" r="3" />
         </svg>
         <svg
-          *ngIf="!areValuesVisible"
+          *ngIf="!isBalanceVisible"
           xmlns="http://www.w3.org/2000/svg"
-          width="20"
-          height="20"
+          width="24"
+          height="24"
           viewBox="0 0 24 24"
           fill="none"
           stroke="currentColor"
@@ -37,80 +35,97 @@
           stroke-linecap="round"
           stroke-linejoin="round"
         >
+          <path d="M9.88 9.88a3 3 0 1 0 4.24 4.24" />
           <path
-            d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 2c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"
-          ></path>
-          <line x1="1" y1="1" x2="23" y2="23"></line>
+            d="M10.73 5.08A10.43 10.43 0 0 1 12 5c7 0 10 7 10 7a13.16 13.16 0 0 1-1.67 2.68"
+          />
+          <path
+            d="M6.61 6.61A13.526 13.526 0 0 0 2 12s3 7 10 7a9.74 9.74 0 0 0 5.39-1.61"
+          />
+          <line x1="2" x2="22" y1="2" y2="22" />
         </svg>
       </button>
+      <button class="add-btn" (click)="openTransactionModal()">
+        + Nova Transação
+      </button>
     </div>
-    <p
-      *ngIf="areValuesVisible; else hiddenValue"
-      class="card-value"
-      [ngClass]="{
-        'saldo-positivo': saldoAtual >= 0,
-        'saldo-negativo': saldoAtual < 0
-      }"
-    >
-      {{ saldoAtual | currency : "BRL" }}
-    </p>
   </div>
 
-  <div class="card">
-    <h3 class="card-title">Receitas do Mês</h3>
-    <p
-      *ngIf="areValuesVisible; else hiddenValue"
-      class="card-value saldo-positivo"
-    >
-      {{ receitasDoMes | currency : "BRL" }}
-    </p>
-  </div>
-
-  <div class="card">
-    <h3 class="card-title">Despesas do Mês</h3>
-    <p
-      *ngIf="areValuesVisible; else hiddenValue"
-      class="card-value saldo-negativo"
-    >
-      {{ despesasDoMes | currency : "BRL" }}
-    </p>
-  </div>
-</section>
-
-<ng-template #hiddenValue>
-  <p class="card-value hidden">R$ ••••••</p>
-</ng-template>
-
-<section class="recent-transactions">
-  <h2>Transações Recentes</h2>
-  <ul
-    class="transaction-list"
-    *ngIf="transacoesRecentes.length > 0; else noTransactions"
-  >
-    <li *ngFor="let t of transacoesRecentes" class="transaction-item">
-      <div class="transaction-details">
-        <span class="transaction-title">{{ t.description }}</span>
-        <span class="transaction-category">{{
-          t.date | date : "dd/MM/yyyy"
-        }}</span>
-      </div>
-      <span
-        *ngIf="areValuesVisible; else hiddenAmount"
-        class="transaction-amount"
+  <!-- Cards de resumo -->
+  <div class="summary-cards">
+    <div class="card">
+      <h2>Saldo Atual</h2>
+      <!-- CORREÇÃO: Aplicando a classe positive/negative diretamente no <p> -->
+      <p
         [ngClass]="{
-          'saldo-positivo': t.type === 'income',
-          'saldo-negativo': t.type === 'expense'
+          positive: summary.currentMonthBalance >= 0,
+          negative: summary.currentMonthBalance < 0
         }"
       >
-        {{ t.type === "income" ? "+" : "-" }} {{ t.value | currency : "BRL" }}
-      </span>
-    </li>
-  </ul>
-  <ng-template #noTransactions>
-    <p>Nenhuma transação recente encontrada.</p>
-  </ng-template>
-</section>
+        <span [class.hidden]="!isBalanceVisible">{{
+          summary.currentMonthBalance | currency : "BRL"
+        }}</span>
+      </p>
+    </div>
+    <div class="card">
+      <h2>Entradas do Mês</h2>
+      <!-- CORREÇÃO: Aplicando a cor verde para entradas -->
+      <p class="positive">
+        <span [class.hidden]="!isBalanceVisible">{{
+          summary.currentMonthIncome | currency : "BRL"
+        }}</span>
+      </p>
+    </div>
+    <div class="card">
+      <h2>Saídas do Mês</h2>
+      <!-- CORREÇÃO: Aplicando a cor vermelha para saídas -->
+      <p class="negative">
+        <span [class.hidden]="!isBalanceVisible">{{
+          summary.currentMonthExpenses | currency : "BRL"
+        }}</span>
+      </p>
+    </div>
+  </div>
 
-<ng-template #hiddenAmount>
-  <span class="transaction-amount hidden">••••••</span>
-</ng-template>
+  <!-- Tabela de Transações Recentes com o novo estilo -->
+  <div class="recent-transactions">
+    <h2>Transações Recentes</h2>
+    <!-- MUDANÇA: Trocamos a <table> por uma <ul> -->
+    <ul class="transaction-list">
+      <li
+        *ngFor="let transaction of summary.recentTransactions"
+        class="transaction-item"
+        [ngClass]="transaction.type"
+      >
+        <div class="transaction-details">
+          <span class="description">{{ transaction.description }}</span>
+          <span class="date">{{ transaction.date | date : "dd/MM/yyyy" }}</span>
+        </div>
+        <div class="transaction-value">
+          <span [class.hidden]="!isBalanceVisible">{{
+            transaction.value | currency : "BRL"
+          }}</span>
+        </div>
+      </li>
+      <li
+        *ngIf="summary.recentTransactions.length === 0"
+        class="no-transactions"
+      >
+        Nenhuma transação registrada este mês.
+      </li>
+    </ul>
+  </div>
+</div>
+
+<!-- Modal (Pop-up) para adicionar nova transação -->
+<div
+  class="modal-overlay"
+  *ngIf="showTransactionModal"
+  (click)="closeTransactionModal()"
+>
+  <div class="modal-content" (click)="$event.stopPropagation()">
+    <app-transactions
+      (transactionSaved)="closeTransactionModal()"
+    ></app-transactions>
+  </div>
+</div>

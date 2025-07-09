@@ -7,6 +7,7 @@ import { isPlatformBrowser } from '@angular/common';
 import { Router } from '@angular/router';
 
 export interface User {
+  username: string;
   balance: number;
   nome: string;
   email: string;

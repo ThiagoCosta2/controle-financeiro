@@ -188,3 +188,8 @@ h1 {
   margin-left: 80px;
   width: calc(100% - 80px);
 }
+/* Estilo para o botão de Sair ao passar o mouse */
+.sidebar-footer .nav-item:hover {
+  background-color: #e74c3c; /* Um tom de vermelho para alerta */
+  color: #ffffff; /* Garante que o ícone e o texto fiquem brancos */
+}
