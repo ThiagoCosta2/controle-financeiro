@@ -60,7 +60,11 @@ export class RegisterComponent implements OnInit {
       return;
     }
 
-    const { confirmarSenha, ...userData } = this.registerForm.value;
+    const { confirmarSenha, senha, ...resto } = this.registerForm.value;
+    const userData = {
+      ...resto,
+      password: senha,
+    };
     const success = this.authService.register(userData);
 
     if (success) {

@@ -53,7 +53,7 @@ export class SettingsComponent implements OnInit {
     if (this.currentUser) {
       // Preenche o formulário de perfil com os dados do usuário atual
       this.profileForm.patchValue({
-        username: this.currentUser.username,
+        nome: this.currentUser.nome,
         email: this.currentUser.email,
       });
     }
@@ -78,7 +78,7 @@ export class SettingsComponent implements OnInit {
     if (this.currentUser) {
       const updatedUser: User = {
         ...this.currentUser,
-        username: this.profileForm.value.username,
+        nome: this.profileForm.value.nome,
       };
 
       const success = this.authService.updateUser(updatedUser);

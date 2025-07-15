@@ -1,6 +1,7 @@
 export interface Transaction {
   id: string;
   userId: string;
+  userEmail?: string;
   type: 'income' | 'expense';
   value: number;
   description: string;

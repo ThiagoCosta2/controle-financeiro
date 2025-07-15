@@ -82,7 +82,7 @@ export class AuthService {
     if (userIndex === -1) return false;
 
     const userInDb = users[userIndex];
-    userInDb.username = updatedUser.username; // Atualiza o nome de usuário
+    userInDb.nome = updatedUser.nome;
 
     this.saveUsers(users);
 

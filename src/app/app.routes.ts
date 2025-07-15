@@ -20,7 +20,6 @@ export const routes: Routes = [
     component: DashboardComponent,
     canActivate: [authGuard], // Protege o acesso ao dashboard
     children: [
-      { path: '', redirectTo: 'home', pathMatch: 'full' },
       { path: 'home', component: DashboardHomeComponent },
       { path: 'transactions', component: TransactionsComponent },
       { path: 'reports', component: ReportsComponent },

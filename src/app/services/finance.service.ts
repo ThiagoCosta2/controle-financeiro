@@ -66,7 +66,11 @@ export class FinanceService {
     const transactions = this.transactionService.getTransactions();
     const effectiveTransactions: Transaction[] = [];
 
-    transactions.forEach((transaction) => {
+    const userTransactions = transactions.filter(
+      (t) => t.userEmail === user.email
+    );
+
+    userTransactions.forEach((transaction) => {
       if (transaction.installments && transaction.installments > 1) {
         for (let i = 1; i <= transaction.installments; i++) {
           const installmentDate = new Date(transaction.date);
