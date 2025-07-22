@@ -1,8 +1,10 @@
 # Controle Financeiro Pessoal 💰
 
-![Tela de Login](https://i.imgur.com/example.png) ## 📝 Sobre o Projeto
+![Página Inicial](screenshots/home.png)
 
-Este é um projeto de um sistema de Controle Financeiro Pessoal, desenvolvido como atividade para a matéria de **Oficina Web** do curso de Análise e Desenvolvimento de Sistemas do **IFPR - Campus Palmas**.
+## 📝 Sobre o Projeto
+
+Este é um projeto de um sistema de Controle Financeiro Pessoal, desenvolvido como atividade para a matéria de **Oficina de Desenvolvimento Web** do curso de Análise e Desenvolvimento de Sistemas do **IFPR - Campus Palmas**.
 
 O objetivo principal foi criar uma aplicação **Single-Page Application (SPA)** moderna e interativa, focada em proporcionar uma excelente experiência ao utilizador na gestão de suas finanças. A aplicação permite que o utilizador se registe, controle as suas receitas e despesas, e visualize relatórios claros sobre a sua situação financeira.
 
@@ -31,17 +33,29 @@ O sistema foi desenhado para ser uma ferramenta completa e intuitiva. As suas pr
 
 <table>
   <tr>
+    <td align="center"><strong>Página Inicial</strong></td>
     <td align="center"><strong>Dashboard Principal</strong></td>
-    <td align="center"><strong>Gerir Transações</strong></td>
   </tr>
   <tr>
-    <td><img src="https://i.imgur.com/example.png" alt="Dashboard com resumo mensal e transações recentes." width="400"/></td> <td><img src="https://i.imgur.com/example.png" alt="Tela de gestão de transações com lista paginada e botões de ação." width="400"/></td> </tr>
+    <td><img src="screenshots/home.png" alt="Página inicial da aplicação." width="400"/></td>
+    <td><img src="screenshots/dashboard.png" alt="Dashboard com resumo mensal e transações recentes." width="400"/></td>
+  </tr>
   <tr>
     <td align="center"><strong>Relatórios Financeiros</strong></td>
     <td align="center"><strong>Configurações de Perfil</strong></td>
   </tr>
   <tr>
-    <td><img src="https://i.imgur.com/example.png" alt="Tela de relatórios com gráficos e histórico de transações." width="400"/></td> <td><img src="https://i.imgur.com/example.png" alt="Tela de configurações onde o utilizador pode alterar seus dados e senha." width="400"/></td> </tr>
+    <td><img src="screenshots/relatório.png" alt="Tela de relatórios com gráficos e histórico de transações." width="400"/></td>
+    <td><img src="screenshots/configurações.png" alt="Tela de configurações onde o utilizador pode alterar seus dados e senha." width="400"/></td>
+  </tr>
+   <tr>
+    <td align="center"><strong>Login</strong></td>
+    <td align="center"><strong>Criar Conta</strong></td>
+  </tr>
+  <tr>
+    <td><img src="screenshots/login.png" alt="Tela de login." width="400"/></td>
+    <td><img src="screenshots/criarconta.png" alt="Tela de criação de conta." width="400"/></td>
+  </tr>
 </table>
 
 ---
@@ -102,4 +116,6 @@ Embora a aplicação seja totalmente funcional, existem várias melhorias que po
 
 ---
 
-_Projeto desenvolvido para a disciplina de Oficina Web._
+## 🎓 Créditos
+
+Este projeto foi desenvolvido como parte da avaliação da disciplina de **Oficina de Desenvolvimento Web**, ministrada pelo professor **Rafael Pagliosa**.
