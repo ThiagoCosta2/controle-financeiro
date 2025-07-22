@@ -1,39 +1,36 @@
 <div class="login-container">
   <div class="login-box">
     <h2>Acessar Sistema</h2>
-
-    <div *ngIf="successMessage" class="success-banner">
-      {{ successMessage }}
-    </div>
-
     <form (ngSubmit)="onSubmit()">
       <div class="input-group">
         <i class="fas fa-envelope"></i>
         <input
           type="email"
           placeholder="Email"
-          [(ngModel)]="email"
           name="email"
+          [(ngModel)]="credentials.email"
           required
         />
       </div>
 
-      <div class="input-group">
+      <div class="input-group password-wrapper">
         <i class="fas fa-lock"></i>
         <input
-          type="password"
+          [type]="showPassword ? 'text' : 'password'"
           placeholder="Senha"
-          [(ngModel)]="senha"
-          name="senha"
+          name="pass"
+          [(ngModel)]="credentials.pass"
           required
         />
+        <i
+          class="fas password-icon"
+          [ngClass]="showPassword ? 'fa-eye' : 'fa-eye-slash'"
+          (click)="togglePasswordVisibility()"
+        ></i>
       </div>
 
-      <button type="submit" class="login-btn">Entrar</button>
+      <button type="submit" class="btn-login">Entrar</button>
+      <a routerLink="/register" class="link-register">Criar Conta</a>
     </form>
-
-    <div class="links">
-      <a routerLink="/register">Criar Conta</a>
-    </div>
   </div>
 </div>

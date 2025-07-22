@@ -1,0 +1,58 @@
+/* ARQUIVO: src/app/components/notification/notification.css */
+
+.notification-container {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  padding: 1rem 1.5rem;
+  border-radius: 8px;
+  color: #fff;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  z-index: 9999;
+  animation: slideIn 0.3s ease-out;
+}
+
+/* Estilos por tipo de notificação */
+.notification-container.success {
+  background-color: #27ae60;
+}
+.notification-container.error {
+  background-color: #c0392b;
+}
+.notification-container.info {
+  background-color: #2980b9;
+}
+
+.message {
+  font-weight: 500;
+}
+
+.close-btn {
+  background: none;
+  border: none;
+  color: #fff;
+  font-size: 1.5rem;
+  font-weight: bold;
+  opacity: 0.7;
+  cursor: pointer;
+  padding: 0;
+  line-height: 1;
+}
+
+.close-btn:hover {
+  opacity: 1;
+}
+
+@keyframes slideIn {
+  from {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}

@@ -1,3 +1,5 @@
+// ARQUIVO: src/app/components/register/register.ts
+
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router, RouterLink } from '@angular/router';
@@ -6,8 +8,17 @@ import {
   FormGroup,
   Validators,
   ReactiveFormsModule,
+  AbstractControl,
 } from '@angular/forms';
 import { AuthService } from '../../services/auth.service';
+import { User } from '../../models/user.model';
+
+// Função validadora customizada
+export function senhasCoincidemValidator(control: AbstractControl) {
+  const senha = control.get('senha')?.value;
+  const confirmarSenha = control.get('confirmarSenha')?.value;
+  return senha === confirmarSenha ? null : { naoCoincidem: true };
+}
 
 @Component({
   selector: 'app-register',
@@ -18,6 +29,8 @@ import { AuthService } from '../../services/auth.service';
 })
 export class RegisterComponent implements OnInit {
   registerForm!: FormGroup;
+  showPassword = false;
+  showConfirmPassword = false;
 
   constructor(
     private fb: FormBuilder,
@@ -26,7 +39,6 @@ export class RegisterComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    // A criação do formulário continua a mesma
     this.registerForm = this.fb.group(
       {
         nome: ['', [Validators.required]],
@@ -38,38 +50,37 @@ export class RegisterComponent implements OnInit {
             Validators.required,
             Validators.minLength(8),
             Validators.pattern(
-              /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[&#64;$!%*?&])[A-Za-z\d&#64;$!%*?&]{8,}$/
+              /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/
             ),
           ],
         ],
         confirmarSenha: ['', [Validators.required]],
       },
-      { validators: this.senhasCoincidem }
+      { validators: senhasCoincidemValidator }
     );
-  }
-
-  senhasCoincidem(group: FormGroup) {
-    const senha = group.get('senha')?.value;
-    const confirmarSenha = group.get('confirmarSenha')?.value;
-    return senha === confirmarSenha ? null : { naoCoincidem: true };
   }
 
   onSubmit(): void {
     this.registerForm.markAllAsTouched();
+
     if (this.registerForm.invalid) {
       return;
     }
 
-    const { confirmarSenha, senha, ...resto } = this.registerForm.value;
-    const userData = {
-      ...resto,
-      password: senha,
+    const { confirmarSenha, ...userData } = this.registerForm.value;
+    const userToRegister: Partial<User> = {
+      id: `user_${new Date().getTime()}`,
+      nome: userData.nome,
+      email: userData.email,
+      password: userData.senha,
     };
-    const success = this.authService.register(userData);
+
+    const success = this.authService.register(userToRegister as User);
 
     if (success) {
-      // MUDANÇA PRINCIPAL: Navega para a rota de login com um parâmetro de sucesso.
-      this.router.navigate(['/login'], { queryParams: { registered: 'true' } });
+      this.router.navigate(['/login'], {
+        queryParams: { registered: 'true' },
+      });
     }
   }
 }

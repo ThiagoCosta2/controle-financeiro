@@ -1,92 +1,179 @@
-import { Component, OnInit } from '@angular/core';
+// ARQUIVO: src/app/components/reports/reports.ts
+
+import {
+  Component,
+  OnInit,
+  OnDestroy,
+  ElementRef,
+  ViewChild,
+  AfterViewInit,
+} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Chart, registerables } from 'chart.js';
-import { FinanceService } from '../../services/finance.service';
 import { Transaction } from '../../models/transaction';
+import { FinanceService } from '../../services/finance.service';
+import { TransactionService } from '../../services/transaction.service';
+import { NotificationService } from '../../services/notification.service';
+import { TransactionsComponent } from '../transactions/transactions'; // Importar
 
 Chart.register(...registerables);
 
 @Component({
   selector: 'app-reports',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, TransactionsComponent], // Adicionar TransactionsComponent
   templateUrl: './reports.html',
   styleUrls: ['./reports.css'],
 })
-export class ReportsComponent implements OnInit {
-  transactionHistory: Transaction[] = [];
+export class ReportsComponent implements OnInit, OnDestroy, AfterViewInit {
+  // Referências para os <canvas> no HTML
+  @ViewChild('incomeExpenseChart') private incomeExpenseChartRef!: ElementRef;
+  @ViewChild('nextMonthChart') private nextMonthChartRef!: ElementRef;
+
+  allTransactions: Transaction[] = [];
+  transactionHistory: Transaction[] = []; // Lista apenas com transações passadas
   paginatedTransactions: Transaction[] = [];
   nextMonthExpenses: Transaction[] = [];
-  nextMonthTotal: number = 0;
+  nextMonthTotal = 0;
+  isBalanceVisible = true;
 
-  currentPage: number = 1;
-  itemsPerPage: number = 5;
-  totalPages: number = 1;
-  itemsPerPageOptions = [5, 10, 15, 20];
+  itemsPerPage = 5;
+  itemsPerPageOptions = [5, 10, 20, 50];
+  currentPage = 1;
+  totalPages = 1;
 
-  // =====> ALTERAÇÃO 1: Propriedade adicionada <=====
-  isBalanceVisible: boolean = true;
+  // Variáveis para os gráficos
+  incomeExpenseChart: Chart | undefined;
+  nextMonthChart: Chart | undefined;
 
-  constructor(private financeService: FinanceService) {}
+  // Para controlar o modal de edição
+  isModalOpen = false;
+
+  constructor(
+    private financeService: FinanceService,
+    private transactionService: TransactionService,
+    private notificationService: NotificationService
+  ) {}
 
   ngOnInit(): void {
     this.loadReportData();
   }
 
-  // =====> ALTERAÇÃO 2: Método adicionado <=====
-  toggleBalanceVisibility(): void {
-    this.isBalanceVisible = !this.isBalanceVisible;
+  ngAfterViewInit(): void {
+    // A criação dos gráficos deve ocorrer depois da view ser inicializada
+    this.createCharts();
+  }
+
+  ngOnDestroy(): void {
+    this.incomeExpenseChart?.destroy();
+    this.nextMonthChart?.destroy();
   }
 
   loadReportData(): void {
+    this.allTransactions = this.financeService.generateEffectiveTransactions();
+    const today = new Date();
+
+    this.transactionHistory = this.allTransactions.filter((t) => {
+      const transactionDate = new Date(t.date);
+
+      const isPastOrPresent = transactionDate <= today;
+
+      const isFutureExpense = t.type === 'expense' && transactionDate > today;
+
+      return isPastOrPresent || isFutureExpense;
+    });
+
+    this.calculateProjections();
+    this.updatePagination();
+
+    if (this.incomeExpenseChart || this.nextMonthChart) {
+      this.createCharts();
+    }
+  }
+
+  createCharts(): void {
+    this.destroyCharts(); // Garante que gráficos antigos sejam destruídos
+
     const today = new Date();
     const currentMonth = today.getMonth();
     const currentYear = today.getFullYear();
-    const allEffectiveTransactions =
-      this.financeService.generateEffectiveTransactions();
 
-    this.transactionHistory = allEffectiveTransactions
-      .filter((t) => new Date(t.date) <= today)
-      .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
-    this.updatePagination();
-
-    const currentMonthTransactions = allEffectiveTransactions.filter((t) => {
+    // Filtra transações do MÊS ATUAL
+    const currentMonthTransactions = this.allTransactions.filter((t) => {
       const d = new Date(t.date);
       return d.getMonth() === currentMonth && d.getFullYear() === currentYear;
     });
 
-    const incomeData = this.financeService.groupTransactionsByCategory(
-      currentMonthTransactions,
-      'income'
-    );
-    this.createDoughnutChart(
-      'incomeChartCanvas',
-      'Receitas do Mês por Categoria',
-      incomeData,
-      ['#28a745', '#218838', '#1e7e34']
+    const summaryCurrentMonth = this.financeService.getMonthlySummary(today);
+    this.incomeExpenseChart = new Chart(
+      this.incomeExpenseChartRef.nativeElement,
+      {
+        type: 'doughnut',
+        data: {
+          labels: ['Receitas', 'Despesas'],
+          datasets: [
+            {
+              data: [summaryCurrentMonth.income, summaryCurrentMonth.expense],
+              backgroundColor: ['#2ecc71', '#e74c3c'],
+            },
+          ],
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: { legend: { position: 'top' } },
+        },
+      }
     );
 
-    const expenseData = this.financeService.groupTransactionsByCategory(
-      currentMonthTransactions,
-      'expense'
-    );
-    this.createDoughnutChart(
-      'expenseChartCanvas',
-      'Despesas do Mês por Categoria',
-      expenseData,
-      ['#dc3545', '#c82333', '#b21f2d']
+    // Gráfico 2: Despesas Previstas para o Próximo Mês
+    const nextMonthDate = new Date(
+      today.getFullYear(),
+      today.getMonth() + 1,
+      1
     );
 
-    const nextMonthDate = new Date(currentYear, currentMonth + 1, 1);
-    this.nextMonthExpenses = allEffectiveTransactions.filter((t) => {
-      const d = new Date(t.date);
+    const summaryNextMonth =
+      this.financeService.getMonthlySummary(nextMonthDate);
+
+    this.nextMonthChart = new Chart(this.nextMonthChartRef.nativeElement, {
+      type: 'doughnut',
+      data: {
+        labels: ['Receitas Previstas', 'Despesas Previstas'],
+        datasets: [
+          {
+            data: [summaryNextMonth.income, summaryNextMonth.expense],
+            backgroundColor: ['#2ecc71', '#e74c3c'],
+          },
+        ],
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: { legend: { position: 'top' } },
+      },
+    });
+  }
+
+  private destroyCharts(): void {
+    this.incomeExpenseChart?.destroy();
+    this.nextMonthChart?.destroy();
+  }
+
+  calculateProjections(): void {
+    const today = new Date();
+    const nextMonth = new Date(today.getFullYear(), today.getMonth() + 1, 1);
+
+    this.nextMonthExpenses = this.allTransactions.filter((t) => {
+      const transactionDate = new Date(t.date);
       return (
         t.type === 'expense' &&
-        d.getMonth() === nextMonthDate.getMonth() &&
-        d.getFullYear() === nextMonthDate.getFullYear()
+        transactionDate.getMonth() === nextMonth.getMonth() &&
+        transactionDate.getFullYear() === nextMonth.getFullYear()
       );
     });
+
     this.nextMonthTotal = this.nextMonthExpenses.reduce(
       (sum, t) => sum + t.value,
       0
@@ -94,59 +181,64 @@ export class ReportsComponent implements OnInit {
   }
 
   updatePagination(): void {
+    // A paginação agora usa a lista de histórico filtrada
     this.totalPages = Math.ceil(
       this.transactionHistory.length / this.itemsPerPage
     );
-    if (this.currentPage > this.totalPages) this.currentPage = 1;
+    if (this.currentPage > this.totalPages && this.totalPages > 0) {
+      this.currentPage = this.totalPages;
+    }
     const startIndex = (this.currentPage - 1) * this.itemsPerPage;
+    const endIndex = startIndex + this.itemsPerPage;
     this.paginatedTransactions = this.transactionHistory.slice(
       startIndex,
-      startIndex + this.itemsPerPage
+      endIndex
     );
   }
 
-  onItemsPerPageChange(): void {
-    this.currentPage = 1;
-    this.updatePagination();
+  // --- Funções para Ações e Modal ---
+
+  openModal(transaction: Transaction): void {
+    // Para edição, precisamos passar o ID da REGRA para o componente de transação
+    // Esta é uma maneira de fazer isso, mas o ideal seria um serviço de estado
+    this.transactionService.startEdit(transaction.sourceRuleId!);
+    this.isModalOpen = true;
   }
 
-  previousPage(): void {
+  closeModal(): void {
+    this.isModalOpen = false;
+    this.transactionService.clearEdit(); // Limpa o estado de edição
+    this.loadReportData(); // Recarrega os dados após salvar
+  }
+
+  onDelete(ruleId: string): void {
+    if (confirm('Tem certeza de que deseja excluir esta regra de transação?')) {
+      this.transactionService.deleteRecurrenceRule(ruleId);
+      this.notificationService.show(
+        'Regra de recorrência excluída!',
+        'success'
+      );
+      this.loadReportData();
+    }
+  }
+
+  // Funções de controle da UI que faltavam
+  toggleBalanceVisibility = () =>
+    (this.isBalanceVisible = !this.isBalanceVisible);
+  previousPage = () => {
     if (this.currentPage > 1) {
       this.currentPage--;
       this.updatePagination();
     }
-  }
-
-  nextPage(): void {
+  };
+  nextPage = () => {
     if (this.currentPage < this.totalPages) {
       this.currentPage++;
       this.updatePagination();
     }
-  }
-
-  createDoughnutChart(
-    canvasId: string,
-    label: string,
-    chartData: { labels: string[]; data: number[] },
-    bgColors: string[]
-  ): void {
-    const canvas = document.getElementById(canvasId) as HTMLCanvasElement;
-    if (!canvas) return;
-    const existingChart = Chart.getChart(canvasId);
-    if (existingChart) existingChart.destroy();
-    new Chart(canvas, {
-      type: 'doughnut',
-      data: {
-        labels: chartData.labels,
-        datasets: [{ label, data: chartData.data, backgroundColor: bgColors }],
-      },
-      options: {
-        responsive: true,
-        plugins: {
-          legend: { position: 'top' },
-          title: { display: true, text: label },
-        },
-      },
-    });
-  }
+  };
+  onItemsPerPageChange = (event: Event) => {
+    this.itemsPerPage = Number((event.target as HTMLSelectElement).value);
+    this.updatePagination();
+  };
 }

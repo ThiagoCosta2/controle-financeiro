@@ -1,111 +1,89 @@
-// src/app/services/transaction.service.ts
+// ARQUIVO: src/app/services/transaction.service.ts
 
-import { Injectable, Inject, PLATFORM_ID } from '@angular/core';
-import { isPlatformBrowser } from '@angular/common';
+import { Injectable } from '@angular/core';
 import { Transaction } from '../models/transaction';
+import { RecurrenceRule } from '../models/recurrence-rule.model'; // IMPORTAR
 import { AuthService } from './auth.service';
 
 @Injectable({
   providedIn: 'root',
 })
 export class TransactionService {
-  private TRANSACTIONS_KEY_PREFIX = 'transactions_';
-  private isBrowser: boolean;
+  private transactionsKey = 'transactions';
+  private rulesKey = 'recurrence_rules'; // NOVA CHAVE PARA REGRAS
+  private ruleIdToEdit: string | null = null;
 
-  constructor(
-    @Inject(PLATFORM_ID) private platformId: object,
-    private authService: AuthService
-  ) {
-    this.isBrowser = isPlatformBrowser(this.platformId);
-  }
+  constructor(private authService: AuthService) {}
 
-  private getStorageKey(): string {
-    const user = this.authService.getCurrentUser();
-    return user ? `${this.TRANSACTIONS_KEY_PREFIX}${user.nome}` : ''; // Propriedade corrigida
-  }
+  // --- MÉTODOS PARA TRANSAÇÕES ÚNICAS ---
 
   getTransactions(): Transaction[] {
-    if (!this.isBrowser) return [];
-    const key = this.getStorageKey();
-    if (!key) return [];
-    const transactionsJson = localStorage.getItem(key);
-    return transactionsJson ? JSON.parse(transactionsJson) : [];
-  }
-
-  saveTransactions(transactions: Transaction[]): void {
-    if (!this.isBrowser) return;
-    const key = this.getStorageKey();
-    if (key) {
-      localStorage.setItem(key, JSON.stringify(transactions));
-    }
+    const currentUser = this.authService.getCurrentUser();
+    if (!currentUser) return [];
+    const allTransactions = this.getAllFromStorage<Transaction>(
+      this.transactionsKey
+    );
+    return allTransactions.filter((t) => t.userId === currentUser.id);
   }
 
   addTransaction(transaction: Transaction): void {
-    const transactions = this.getTransactions();
-    transactions.push(transaction);
-    this.saveTransactions(transactions);
-  }
-
-  deleteTransaction(id: string): void {
-    let transactions = this.getTransactions();
-    transactions = transactions.filter((t) => t.id !== id);
-    this.saveTransactions(transactions);
-  }
-
-  updateTransaction(updatedTransaction: Transaction): void {
-    let transactions = this.getTransactions();
-    transactions = transactions.map((t) =>
-      t.id === updatedTransaction.id ? updatedTransaction : t
+    const allTransactions = this.getAllFromStorage<Transaction>(
+      this.transactionsKey
     );
-    this.saveTransactions(transactions);
+    allTransactions.push(transaction);
+    this.saveAllToStorage(this.transactionsKey, allTransactions);
   }
 
-  /************************************************************/
-  /* --- FUNÇÕES ADICIONADAS PARA CORRIGIR OS ERROS DO DASHBOARD --- */
-  /************************************************************/
+  // --- MÉTODOS NOVOS PARA GERIR REGRAS DE RECORRÊNCIA ---
 
-  getSaldoAtual(): number {
-    const transactions = this.getTransactions();
-    const totalIncome = transactions
-      .filter((t) => t.type === 'income')
-      .reduce((sum, t) => sum + t.value, 0);
-    const totalExpense = transactions
-      .filter((t) => t.type === 'expense')
-      .reduce((sum, t) => sum + t.value, 0);
-    return totalIncome - totalExpense;
+  getRecurrenceRules(): RecurrenceRule[] {
+    const currentUser = this.authService.getCurrentUser();
+    if (!currentUser) return [];
+    const allRules = this.getAllFromStorage<RecurrenceRule>(this.rulesKey);
+    return allRules.filter((r) => r.userId === currentUser.id);
   }
 
-  getReceitasDoMes(): number {
-    const now = new Date();
-    return this.getTransactions()
-      .filter((t) => {
-        const transactionDate = new Date(t.date);
-        return (
-          t.type === 'income' &&
-          transactionDate.getMonth() === now.getMonth() &&
-          transactionDate.getFullYear() === now.getFullYear()
-        );
-      })
-      .reduce((sum, t) => sum + t.value, 0);
+  addRecurrenceRule(rule: RecurrenceRule): void {
+    const allRules = this.getAllFromStorage<RecurrenceRule>(this.rulesKey);
+    allRules.push(rule);
+    this.saveAllToStorage(this.rulesKey, allRules);
   }
 
-  getDespesasDoMes(): number {
-    const now = new Date();
-    return this.getTransactions()
-      .filter((t) => {
-        const transactionDate = new Date(t.date);
-        return (
-          t.type === 'expense' &&
-          transactionDate.getMonth() === now.getMonth() &&
-          transactionDate.getFullYear() === now.getFullYear()
-        );
-      })
-      .reduce((sum, t) => sum + t.value, 0);
+  updateRecurrenceRule(updatedRule: RecurrenceRule): void {
+    let allRules = this.getAllFromStorage<RecurrenceRule>(this.rulesKey);
+    allRules = allRules.map((rule) =>
+      rule.id === updatedRule.id ? updatedRule : rule
+    );
+    this.saveAllToStorage(this.rulesKey, allRules);
   }
 
-  getTransacoesRecentes(limit: number): Transaction[] {
-    return this.getTransactions()
-      .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
-      .slice(0, limit);
+  deleteRecurrenceRule(ruleId: string): void {
+    let allRules = this.getAllFromStorage<RecurrenceRule>(this.rulesKey);
+    allRules = allRules.filter((rule) => rule.id !== ruleId);
+    this.saveAllToStorage(this.rulesKey, allRules);
+  }
+
+  // --- MÉTODOS GENÉRICOS DE ARMAZENAMENTO ---
+
+  private getAllFromStorage<T>(key: string): T[] {
+    const data = localStorage.getItem(key);
+    return data ? JSON.parse(data) : [];
+  }
+
+  private saveAllToStorage<T>(key: string, data: T[]): void {
+    localStorage.setItem(key, JSON.stringify(data));
+  }
+
+  // NOVOS MÉTODOS PARA CONTROLAR A EDIÇÃO
+  startEdit(ruleId: string) {
+    this.ruleIdToEdit = ruleId;
+  }
+
+  getRuleToEdit(): string | null {
+    return this.ruleIdToEdit;
+  }
+
+  clearEdit() {
+    this.ruleIdToEdit = null;
   }
 }

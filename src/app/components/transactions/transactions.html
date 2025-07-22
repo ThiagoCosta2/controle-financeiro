@@ -1,77 +1,173 @@
-<div class="container">
-  <h1>Gerenciar Transações</h1>
+<div class="page-container">
+  <div class="header-card">
+    <div class="header-content">
+      <h2>Gerenciar Transações</h2>
+      <p>Adicione, edite e visualize suas movimentações financeiras.</p>
+    </div>
+    <div class="header-actions">
+      <button
+        class="icon-button"
+        (click)="toggleBalanceVisibility()"
+        title="Mostrar/Ocultar valores"
+      >
+        <i
+          class="fas"
+          [ngClass]="isBalanceVisible ? 'fa-eye' : 'fa-eye-slash'"
+        ></i>
+      </button>
+      <button class="add-btn" (click)="openModal()">
+        <i class="fas fa-plus"></i>
+        <span>Nova Transação</span>
+      </button>
+    </div>
+  </div>
 
-  <form [formGroup]="transactionForm" (ngSubmit)="onSubmit()">
-    <div class="form-group">
-      <label>Tipo:</label>
-      <div class="type-selection">
-        <label>
-          <!-- CORREÇÃO: O valor do radio button agora é 'income' -->
-          <input type="radio" formControlName="type" value="income" /> Receita
-        </label>
-        <label>
-          <!-- CORREÇÃO: O valor do radio button agora é 'expense' -->
-          <input type="radio" formControlName="type" value="expense" /> Despesa
-        </label>
+  <div class="transactions-container-card">
+    <div
+      *ngIf="paginatedTransactions.length > 0; else noTransactions"
+      class="transactions-list"
+    >
+      <div
+        *ngFor="let transaction of paginatedTransactions"
+        class="transaction-item"
+        [ngClass]="transaction.type"
+      >
+        <div class="transaction-info">
+          <div class="transaction-icon" [ngClass]="transaction.type">
+            <i
+              class="fas"
+              [ngClass]="
+                transaction.type === 'income' ? 'fa-arrow-up' : 'fa-arrow-down'
+              "
+            ></i>
+          </div>
+          <div class="transaction-details">
+            <span class="transaction-description">{{
+              transaction.description
+            }}</span>
+            <span class="transaction-date">{{
+              transaction.date | date : "dd/MM/yyyy"
+            }}</span>
+          </div>
+        </div>
+        <div class="transaction-value">
+          <span *ngIf="isBalanceVisible">{{
+            transaction.value | currency : "BRL"
+          }}</span>
+          <span *ngIf="!isBalanceVisible">R$ ••••••</span>
+        </div>
+        <div class="transaction-actions">
+          <ng-container *ngIf="transaction.isRecurring">
+            <button
+              (click)="openModal(transaction)"
+              class="action-btn edit-btn"
+              title="Editar Regra"
+            >
+              <i class="fas fa-pencil-alt"></i>
+            </button>
+            <button
+              (click)="onDelete(transaction.sourceRuleId!)"
+              class="action-btn delete-btn"
+              title="Excluir Regra"
+            >
+              <i class="fas fa-trash-alt"></i>
+            </button>
+          </ng-container>
+        </div>
       </div>
     </div>
-
-    <div class="form-group">
-      <label for="description">Descrição:</label>
-      <input
-        type="text"
-        id="description"
-        formControlName="description"
-        placeholder="Ex: Salário, Aluguel"
-      />
+    <ng-template #noTransactions>
+      <div class="no-transactions">
+        <p>Nenhuma transação encontrada.</p>
+        <span>Clique em "Nova Transação" para começar.</span>
+      </div>
+    </ng-template>
+    <div class="pagination-controls" *ngIf="totalPages > 1">
+      <button (click)="previousPage()" [disabled]="currentPage === 1">
+        Anterior
+      </button>
+      <span>Página {{ currentPage }} de {{ totalPages }}</span>
+      <button (click)="nextPage()" [disabled]="currentPage === totalPages">
+        Próxima
+      </button>
     </div>
+  </div>
+</div>
 
-    <div class="form-group">
-      <label for="value">Valor:</label>
-      <input
-        type="number"
-        id="value"
-        formControlName="value"
-        placeholder="150.50"
-      />
-    </div>
+<div class="popup-overlay" *ngIf="isModalOpen" (click)="closeModal()">
+  <div class="popup-container" (click)="$event.stopPropagation()">
+    <h3>{{ editingRuleId ? "Editar Regra" : "Nova Transação" }}</h3>
 
-    <div class="form-group">
-      <label for="date">Data:</label>
-      <input type="date" id="date" formControlName="date" />
-    </div>
-
-    <div class="form-group">
-      <label for="category">Categoria:</label>
-      <input
-        type="text"
-        id="category"
-        formControlName="category"
-        placeholder="Ex: Moradia, Alimentação"
-      />
-    </div>
-
-    <div class="form-options">
+    <form [formGroup]="transactionForm" (ngSubmit)="onSubmit()">
       <div class="form-group">
-        <label for="installments">Parcelas:</label>
+        <label>Tipo:</label>
+        <div class="type-selection">
+          <label>
+            <input type="radio" formControlName="type" value="income" /> Receita
+          </label>
+          <label>
+            <input type="radio" formControlName="type" value="expense" />
+            Despesa
+          </label>
+        </div>
+      </div>
+      <div class="form-group">
+        <label for="description">Descrição:</label>
+        <input
+          type="text"
+          id="description"
+          formControlName="description"
+          placeholder="Ex: Salário, Compra Parcelada"
+        />
+      </div>
+      <div class="form-group">
+        <label for="value">Valor:</label>
+        <input
+          type="tel"
+          id="value"
+          formControlName="value"
+          placeholder="R$ 0,00"
+          appCurrencyMask
+        />
+      </div>
+      <div class="form-group">
+        <label for="date">{{
+          transactionForm.get("isRecurring")?.value
+            ? "Data da primeira parcela"
+            : "Data"
+        }}</label>
+        <input type="date" id="date" formControlName="date" />
+      </div>
+      <div class="form-group">
+        <label class="checkbox-label">
+          <input type="checkbox" formControlName="isRecurring" /> É uma
+          transação recorrente ou parcelada?
+        </label>
+      </div>
+      <div *ngIf="transactionForm.get('isRecurring')?.value" class="form-group">
+        <label for="installments"
+          >Número de Parcelas (deixe em branco para ser recorrente todo
+          mês)</label
+        >
         <input
           type="number"
           id="installments"
           formControlName="installments"
-          min="1"
+          placeholder="Ex: 12"
         />
       </div>
-      <div class="form-group recurring-check">
-        <label>
-          <input type="checkbox" formControlName="isRecurring" /> É recorrente?
-        </label>
+      <div class="popup-actions">
+        <button type="button" class="btn-secondary" (click)="closeModal()">
+          Cancelar
+        </button>
+        <button
+          type="submit"
+          class="btn-primary"
+          [disabled]="transactionForm.invalid"
+        >
+          Salvar
+        </button>
       </div>
-    </div>
-
-    <button type="submit" [disabled]="transactionForm.invalid">
-      Adicionar Transação
-    </button>
-  </form>
-
-  <!-- A lista de transações pode ser adicionada aqui se desejado -->
+    </form>
+  </div>
 </div>

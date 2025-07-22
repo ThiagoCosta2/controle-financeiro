@@ -112,17 +112,22 @@
 }
 
 .add-button {
-  background-color: #0d6efd;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  background-color: #3498db; /* Cor exata do botão da tela de transações */
   color: white;
   border: none;
-  padding: 0.6rem 1.2rem;
+  padding: 0.8rem 1.2rem; /* Padding exato do outro botão */
   border-radius: 8px;
+  font-size: 1rem;
   font-weight: 500;
   cursor: pointer;
-  transition: background-color 0.2s ease-in-out;
+  transition: background-color 0.3s;
 }
+
 .add-button:hover {
-  background-color: #0b5ed7;
+  background-color: #2980b9; /* Efeito hover exato */
 }
 
 .transaction-list {
@@ -149,15 +154,13 @@
   align-items: center;
   justify-content: center;
   margin-right: 1rem;
-  color: white;
+  color: white; /* Garante que o ícone (seta) seja branco */
 }
 .transaction-item.income .transaction-icon {
-  background-color: #d1e7dd;
-  color: #0f5132;
+  background-color: #2ecc71; /* Verde sólido */
 }
 .transaction-item.expense .transaction-icon {
-  background-color: #f8d7da;
-  color: #842029;
+  background-color: #e74c3c; /* Vermelho sólido */
 }
 
 .transaction-details {
@@ -213,4 +216,37 @@
   border-radius: 12px;
   width: 90%;
   max-width: 500px;
+}
+
+/* ARQUIVO: src/app/components/dashboard-home/dashboard-home.css */
+
+/* --- ESTILOS PARA O MODAL (POP-UP) --- */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.6);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+  backdrop-filter: blur(5px);
+}
+
+.modal-content {
+  width: 100%;
+  max-width: 800px;
+
+  background-color: #f4f7fa;
+  border-radius: 12px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+  overflow: hidden;
+}
+
+:host ::ng-deep .modal-content app-transactions .page-container {
+  padding: 0;
+  margin: 0;
+  max-width: none;
 }

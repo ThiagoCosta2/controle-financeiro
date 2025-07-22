@@ -1,87 +1,106 @@
 <div class="register-container">
-  <!--
-      As diretivas [formGroup] e (ngSubmit) são essenciais.
-      Elas garantem que o Angular controle o formulário e evite o recarregamento da página.
-    -->
-  <form [formGroup]="registerForm" (ngSubmit)="onSubmit()">
+  <div class="register-box">
     <h2>Criar Conta</h2>
-
-    <!-- Campo Nome Completo -->
-    <input type="text" placeholder="Nome Completo" formControlName="nome" />
-    <!-- A diretiva *ngIf mostra o erro apenas quando o campo é inválido e foi tocado -->
-    <div
-      *ngIf="
-        registerForm.get('nome')?.invalid && registerForm.get('nome')?.touched
-      "
-      class="error-message"
-    >
-      Nome é obrigatório.
-    </div>
-
-    <!-- Campo E-mail -->
-    <input type="email" placeholder="E-mail" formControlName="email" />
-    <div
-      *ngIf="
-        registerForm.get('email')?.touched && registerForm.get('email')?.errors
-      "
-      class="error-message"
-    >
-      <span *ngIf="registerForm.get('email')?.errors?.['required']"
-        >E-mail é obrigatório.</span
+    <form [formGroup]="registerForm" (ngSubmit)="onSubmit()" novalidate>
+      <div class="input-group">
+        <i class="fas fa-user"></i>
+        <input type="text" placeholder="Nome Completo" formControlName="nome" />
+      </div>
+      <div
+        *ngIf="
+          registerForm.get('nome')?.invalid && registerForm.get('nome')?.touched
+        "
+        class="error-message"
       >
-      <span *ngIf="registerForm.get('email')?.errors?.['email']"
-        >Formato de e-mail inválido.</span
+        O nome completo é obrigatório.
+      </div>
+
+      <div class="input-group">
+        <i class="fas fa-envelope"></i>
+        <input type="email" placeholder="E-mail" formControlName="email" />
+      </div>
+      <div
+        *ngIf="
+          registerForm.get('email')?.invalid &&
+          registerForm.get('email')?.touched
+        "
+        class="error-message"
       >
-    </div>
+        <span *ngIf="registerForm.get('email')?.errors?.['required']"
+          >O e-mail é obrigatório.</span
+        >
+        <span *ngIf="registerForm.get('email')?.errors?.['email']"
+          >Por favor, insira um e-mail válido.</span
+        >
+      </div>
 
-    <!-- Campo Usuário -->
-    <input type="text" placeholder="Usuário" formControlName="usuario" />
-    <div
-      *ngIf="
-        registerForm.get('usuario')?.invalid &&
-        registerForm.get('usuario')?.touched
-      "
-      class="error-message"
-    >
-      Usuário é obrigatório.
-    </div>
-
-    <!-- Campo Senha -->
-    <input type="password" placeholder="Senha" formControlName="senha" />
-    <div
-      *ngIf="
-        registerForm.get('senha')?.touched && registerForm.get('senha')?.errors
-      "
-      class="error-message"
-    >
-      <span *ngIf="registerForm.get('senha')?.errors?.['required']"
-        >Senha é obrigatória.</span
+      <div class="input-group">
+        <i class="fas fa-at"></i>
+        <input type="text" placeholder="Usuário" formControlName="usuario" />
+      </div>
+      <div
+        *ngIf="
+          registerForm.get('usuario')?.invalid &&
+          registerForm.get('usuario')?.touched
+        "
+        class="error-message"
       >
-      <span *ngIf="registerForm.get('senha')?.errors?.['minlength']"
-        >A senha deve ter no mínimo 8 caracteres.</span
+        O nome de usuário é obrigatório.
+      </div>
+
+      <div class="input-group password-wrapper">
+        <i class="fas fa-lock"></i>
+        <input
+          [type]="showPassword ? 'text' : 'password'"
+          placeholder="Senha"
+          formControlName="senha"
+        />
+        <i
+          class="fas password-icon"
+          [ngClass]="showPassword ? 'fa-eye' : 'fa-eye-slash'"
+          (click)="showPassword = !showPassword"
+        ></i>
+      </div>
+      <div
+        *ngIf="
+          registerForm.get('senha')?.invalid &&
+          registerForm.get('senha')?.touched
+        "
+        class="error-message"
       >
-      <span *ngIf="registerForm.get('senha')?.errors?.['pattern']"
-        >Use maiúsculas, minúsculas, números e um caractere especial
-        (&#64;$!%*?&).</span
+        <span *ngIf="registerForm.get('senha')?.errors?.['required']"
+          >A senha é obrigatória.</span
+        >
+        <span *ngIf="registerForm.get('senha')?.errors?.['minlength']"
+          >A senha deve ter no mínimo 8 caracteres.</span
+        >
+        <span *ngIf="registerForm.get('senha')?.errors?.['pattern']"
+          >Use maiúsculas, minúsculas, números e um símbolo (&#64;$!%*?&).</span
+        >
+      </div>
+
+      <div class="input-group password-wrapper">
+        <i class="fas fa-lock"></i>
+        <input
+          [type]="showConfirmPassword ? 'text' : 'password'"
+          placeholder="Confirmar Senha"
+          formControlName="confirmarSenha"
+        />
+        <i
+          class="fas password-icon"
+          [ngClass]="showConfirmPassword ? 'fa-eye' : 'fa-eye-slash'"
+          (click)="showConfirmPassword = !showConfirmPassword"
+        ></i>
+      </div>
+      <div
+        *ngIf="registerForm.errors?.['naoCoincidem'] && registerForm.get('confirmarSenha')?.touched"
+        class="error-message"
       >
-    </div>
+        As senhas não coincidem.
+      </div>
 
-    <!-- Campo Confirmar Senha -->
-    <input
-      type="password"
-      placeholder="Confirmar Senha"
-      formControlName="confirmarSenha"
-    />
-    <div
-      *ngIf="registerForm.get('confirmarSenha')?.touched && registerForm.errors?.['naoCoincidem']"
-      class="error-message"
-    >
-      As senhas não coincidem.
-    </div>
-
-    <!-- O botão agora aciona o (ngSubmit) do formulário -->
-    <button type="submit" class="btn-primary">Criar Conta</button>
-
-    <a class="link-login" routerLink="/login">Já tem uma conta? Entrar</a>
-  </form>
+      <button type="submit" class="btn-register">Criar Conta</button>
+      <a routerLink="/login" class="link-login">Já tem uma conta? Entrar</a>
+    </form>
+  </div>
 </div>

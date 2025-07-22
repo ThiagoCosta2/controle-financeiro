@@ -1,9 +1,9 @@
 // ARQUIVO: src/app/components/login/login.ts
 
 import { Component, OnInit } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { Router, RouterLink, ActivatedRoute } from '@angular/router';
 import { FormsModule } from '@angular/forms';
+import { Router, RouterLink, ActivatedRoute } from '@angular/router';
+import { CommonModule } from '@angular/common';
 import { AuthService } from '../../services/auth.service';
 import { NotificationService } from '../../services/notification.service';
 
@@ -15,42 +15,46 @@ import { NotificationService } from '../../services/notification.service';
   styleUrls: ['./login.css'],
 })
 export class LoginComponent implements OnInit {
-  email = '';
-  senha = '';
-  successMessage = '';
+  credentials = { email: '', pass: '' };
+  showPassword = false;
 
   constructor(
     private authService: AuthService,
     private router: Router,
-    private route: ActivatedRoute,
-    private notificationService: NotificationService
+    private notificationService: NotificationService,
+    private route: ActivatedRoute // Injeta o serviço para ler a URL
   ) {}
 
   ngOnInit(): void {
+    // ESTE BLOCO É O RESPONSÁVEL POR LER O AVISO
     this.route.queryParams.subscribe((params) => {
+      // Verifica se o parâmetro 'registered' existe na URL
       if (params['registered'] === 'true') {
-        this.successMessage =
-          'Conta criada com sucesso! Por favor, faça o login.';
+        // Se existir, mostra a notificação de sucesso
+        this.notificationService.show(
+          'Conta criada com sucesso! Faça o login para continuar.',
+          'success'
+        );
+
+        // Limpa a URL para que a mensagem não apareça novamente se o utilizador atualizar a página
+        this.router.navigate([], {
+          relativeTo: this.route,
+          queryParams: { registered: null },
+          queryParamsHandling: 'merge',
+          replaceUrl: true,
+        });
       }
     });
   }
 
   onSubmit(): void {
-    if (!this.email || !this.senha) {
-      this.notificationService.show(
-        'Por favor, preencha todos os campos.',
-        'error'
-      );
-      return;
-    }
-
-    const success = this.authService.login({
-      email: this.email,
-      pass: this.senha,
-    });
-
-    if (success) {
+    const loginSuccess = this.authService.login(this.credentials);
+    if (loginSuccess) {
       this.router.navigate(['/dashboard/home']);
     }
+  }
+
+  togglePasswordVisibility(): void {
+    this.showPassword = !this.showPassword;
   }
 }

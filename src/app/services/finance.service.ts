@@ -1,7 +1,6 @@
-// Copie e cole este código inteiro no seu arquivo finance.service.ts
+// ARQUIVO: src/app/services/finance.service.ts
 
 import { Injectable } from '@angular/core';
-import { AuthService } from './auth.service';
 import { TransactionService } from './transaction.service';
 import { Transaction } from '../models/transaction';
 
@@ -9,116 +8,121 @@ import { Transaction } from '../models/transaction';
   providedIn: 'root',
 })
 export class FinanceService {
-  constructor(
-    private authService: AuthService,
-    private transactionService: TransactionService
-  ) {}
+  constructor(private transactionService: TransactionService) {}
 
-  // ====================================================================
-  // MÉTODOS PARA O NOVO DASHBOARD E TRANSACTIONS (CORRIGINDO OS ERROS)
-  // ====================================================================
-
-  /**
-   * Adiciona uma transação através do TransactionService.
-   * Este método é chamado pelo componente de transações.
-   */
-  public addTransaction(transaction: Transaction): void {
-    this.transactionService.addTransaction(transaction);
-  }
-
-  /**
-   * Retorna os totais de receita e despesa do mês atual.
-   * Usado pelo dashboard-home.
-   */
-  public getMonthlySummary(): { income: number; expense: number } {
-    const allTransactions = this.generateEffectiveTransactions();
-    const now = new Date();
-    const currentMonth = now.getMonth();
-    const currentYear = now.getFullYear();
-
-    const currentMonthTransactions = allTransactions.filter((t) => {
-      const transactionDate = new Date(t.date);
-      return (
-        transactionDate.getMonth() === currentMonth &&
-        transactionDate.getFullYear() === currentYear
-      );
-    });
-
-    const income = currentMonthTransactions
-      .filter((t) => t.type === 'income')
-      .reduce((sum, t) => sum + t.value, 0);
-
-    const expense = currentMonthTransactions
-      .filter((t) => t.type === 'expense')
-      .reduce((sum, t) => sum + t.value, 0);
-
-    return { income, expense };
-  }
-
-  // ====================================================================
-  // MÉTODOS PARA A NOVA TELA DE RELATÓRIOS (JÁ CORRIGIDOS ANTES)
-  // ====================================================================
-
+  // MÉTODO PRINCIPAL DE PROJEÇÃO (CORRIGIDO)
   public generateEffectiveTransactions(): Transaction[] {
-    const user = this.authService.getCurrentUser();
-    if (!user) return [];
+    const baseTransactions = this.transactionService.getTransactions();
+    const rules = this.transactionService.getRecurrenceRules();
+    const projectedTransactions: Transaction[] = [];
 
-    const transactions = this.transactionService.getTransactions();
-    const effectiveTransactions: Transaction[] = [];
+    const today = new Date();
+    const lookbackYears = 5;
+    const lookaheadYears = 5;
 
-    const userTransactions = transactions.filter(
-      (t) => t.userEmail === user.email
-    );
+    rules.forEach((rule) => {
+      const startDate = new Date(rule.startDate + 'T00:00:00Z');
+      let occurrenceCount = 0;
 
-    userTransactions.forEach((transaction) => {
-      if (transaction.installments && transaction.installments > 1) {
-        for (let i = 1; i <= transaction.installments; i++) {
-          const installmentDate = new Date(transaction.date);
-          installmentDate.setMonth(installmentDate.getMonth() + (i - 1));
-          effectiveTransactions.push({
-            ...transaction,
-            date: installmentDate.toISOString(),
-            value: transaction.value,
-            description: `${transaction.description} (${i}/${transaction.installments})`,
-            id: `${transaction.id}-installment-${i}`,
+      for (let y = -lookbackYears; y <= lookaheadYears; y++) {
+        for (let m = 0; m < 12; m++) {
+          const firstDayOfMonth = new Date(
+            Date.UTC(today.getFullYear() + y, m, 1)
+          );
+          const daysInMonth = new Date(
+            firstDayOfMonth.getFullYear(),
+            firstDayOfMonth.getMonth() + 1,
+            0
+          ).getDate();
+          const day = Math.min(rule.dayOfMonth, daysInMonth);
+
+          let occurrenceDate = new Date(
+            Date.UTC(
+              firstDayOfMonth.getFullYear(),
+              firstDayOfMonth.getMonth(),
+              day
+            )
+          );
+
+          if (occurrenceDate < startDate) continue;
+
+          if (rule.installments && rule.installments > 0) {
+            const monthsDiff =
+              (occurrenceDate.getFullYear() - startDate.getFullYear()) * 12 +
+              (occurrenceDate.getMonth() - startDate.getMonth());
+            if (monthsDiff >= rule.installments) continue;
+            occurrenceCount = monthsDiff + 1;
+          }
+
+          const description =
+            rule.installments && rule.installments > 0
+              ? `${rule.description} (${occurrenceCount}/${rule.installments})`
+              : rule.description;
+
+          projectedTransactions.push({
+            id: `rule-${rule.id}-${occurrenceDate.toISOString().split('T')[0]}`,
+            userId: rule.userId,
+            description: description,
+            value: rule.value,
+            date: occurrenceDate.toISOString(),
+            type: rule.type,
+            isRecurring: true,
+            sourceRuleId: rule.id,
           });
         }
-      } else if (transaction.isRecurring) {
-        for (let i = 0; i < 12; i++) {
-          const recurringDate = new Date(transaction.date);
-          recurringDate.setMonth(recurringDate.getMonth() + i);
-          effectiveTransactions.push({
-            ...transaction,
-            date: recurringDate.toISOString(),
-            id: `${transaction.id}-recurring-${i}`,
-          });
-        }
-      } else {
-        effectiveTransactions.push(transaction);
       }
     });
 
-    return effectiveTransactions;
+    const allTransactions = [...baseTransactions, ...projectedTransactions];
+    return allTransactions.sort(
+      (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()
+    );
   }
 
+  // MÉTODO ADICIONADO DE VOLTA
+  public getMonthlySummary(month?: Date) {
+    const targetMonth = month ? month.getMonth() : new Date().getMonth();
+    const targetYear = month ? month.getFullYear() : new Date().getFullYear();
+
+    const transactions = this.generateEffectiveTransactions().filter((t) => {
+      const transactionDate = new Date(t.date);
+      return (
+        transactionDate.getMonth() === targetMonth &&
+        transactionDate.getFullYear() === targetYear
+      );
+    });
+
+    const income = transactions
+      .filter((t) => t.type === 'income')
+      .reduce((sum, t) => sum + t.value, 0);
+
+    const expense = transactions
+      .filter((t) => t.type === 'expense')
+      .reduce((sum, t) => sum + t.value, 0);
+
+    return {
+      income,
+      expense,
+      balance: income - expense,
+    };
+  }
+
+  // MÉTODO ADICIONADO DE VOLTA
   public groupTransactionsByCategory(
     transactions: Transaction[],
     type: 'income' | 'expense'
-  ): { labels: string[]; data: number[] } {
-    const filteredTransactions = transactions.filter((t) => t.type === type);
-    const categoryMap = new Map<string, number>();
-
-    for (const transaction of filteredTransactions) {
-      const category =
-        transaction.category ||
-        (type === 'income' ? 'Outras Receitas' : 'Outras Despesas');
-      const currentValue = categoryMap.get(category) || 0;
-      categoryMap.set(category, currentValue + transaction.value);
-    }
+  ) {
+    const filtered = transactions.filter((t) => t.type === type);
+    const grouped = filtered.reduce((acc, t) => {
+      // Usaremos a descrição como categoria por agora
+      const category = t.description.replace(/\s\(\d+\/\d+\)$/, ''); // Remove (1/12)
+      acc[category] = (acc[category] || 0) + t.value;
+      return acc;
+    }, {} as { [key: string]: number });
 
     return {
-      labels: Array.from(categoryMap.keys()),
-      data: Array.from(categoryMap.values()),
+      labels: Object.keys(grouped),
+      data: Object.values(grouped),
     };
   }
 }

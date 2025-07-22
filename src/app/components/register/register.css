@@ -1,101 +1,100 @@
-/* Container principal que centraliza o formulário na tela */
-.register-container {
+/* ARQUIVO: src/app/components/register/register.css */
+
+:host {
   display: flex;
-  justify-content: center;
   align-items: center;
-  height: 100vh;
-  background-color: #2c3e50; /* Mesmo fundo da tela de login */
+  justify-content: center;
+  min-height: 100vh;
+  background-color: #2c3e50;
+  padding: 20px 0;
+}
+.register-container {
+  text-align: center;
+}
+.register-box {
+  background-color: #34495e;
+  padding: 40px;
+  border-radius: 12px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+  width: 380px;
+}
+.register-box h2 {
+  color: #ecf0f1;
+  margin-bottom: 30px;
 }
 
-/* O formulário em si */
 form {
   display: flex;
-  flex-direction: column; /* Organiza os itens em coluna */
-  gap: 15px; /* Espaçamento padrão entre os itens */
-  padding: 40px;
-  background-color: #34495e; /* Cor do card do formulário */
-  border-radius: 8px;
-  width: 100%;
-  max-width: 400px; /* Largura máxima do formulário */
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+  flex-direction: column;
 }
-
-/* Estilo do título "Criar Conta" */
-h2 {
-  color: #ecf0f1;
-  text-align: center;
+.input-group {
+  position: relative;
   margin-bottom: 10px;
-  font-family: sans-serif;
+  display: flex;
+  align-items: center;
 }
-
-/* Estilo dos campos de input */
-input {
-  padding: 12px;
-  border: 1px solid #7f8c8d;
+.input-group i {
+  position: absolute;
+  left: 15px;
+  color: #7f8c8d;
+}
+.input-group input {
+  width: 100%;
+  padding: 12px 12px 12px 45px;
+  border: 1px solid #4a637b;
   background-color: #4a637b;
-  border-radius: 4px;
+  border-radius: 8px;
   color: #ecf0f1;
-  font-size: 16px;
-  outline: none; /* Remove a borda azul padrão ao focar */
-  transition: border-color 0.3s ease;
+  font-size: 1rem;
+  outline: none;
+  transition: border-color 0.3s;
+}
+.input-group input::placeholder {
+  color: #95a5a6;
+}
+.input-group input:focus {
+  border-color: #3498db;
 }
 
-input::placeholder {
-  color: #bdc3c7;
-}
-
-input:focus {
-  border-color: #3498db; /* Borda azul ao focar no input */
-}
-
-/* Estilo para o input quando houver um erro de validação */
-input.input-error {
-  border-color: #e74c3c; /* Borda vermelha para indicar erro */
-}
-
-/* Estilo para as mensagens de erro */
-.error-message {
-  color: #e74c3c; /* Cor vermelha para o texto do erro */
-  font-size: 14px;
-  margin-top: -10px; /* Puxa a mensagem para perto do input acima */
-  margin-bottom: 5px; /* Espaço antes do próximo elemento */
-  display: none; /* O erro só aparece quando necessário (controlado por JS/TS) */
-}
-
-/* IMPORTANTE: Você usará uma classe para mostrar o erro */
-.error-message.show {
-  display: block;
-}
-
-/* Botão principal de "Criar Conta" */
-.btn-primary {
-  padding: 12px;
-  margin-top: 10px; /* Mais espaço antes do botão */
-  border: none;
-  background-color: #3498db;
-  color: white;
-  font-size: 16px;
-  font-weight: bold;
-  border-radius: 4px;
+.password-wrapper .password-icon {
+  position: absolute;
+  right: 15px;
+  left: auto;
   cursor: pointer;
-  transition: background-color 0.3s ease;
+  color: #7f8c8d;
 }
 
-.btn-primary:hover {
+.error-message {
+  color: #e74c3c;
+  font-size: 0.8rem;
+  text-align: left;
+  margin: -5px 0 10px 5px;
+}
+
+.btn-register {
+  width: 100%;
+  padding: 12px;
+  background-color: #3498db;
+  border: none;
+  border-radius: 8px;
+  color: white;
+  font-size: 1.1rem;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background-color 0.3s;
+  margin-top: 15px;
+}
+.btn-register:hover {
   background-color: #2980b9;
 }
 
-/* Link "Já tem uma conta? Entrar" */
 .link-login {
+  display: block;
+  margin-top: 20px;
   color: #bdc3c7;
-  text-align: center;
   text-decoration: none;
-  font-family: sans-serif;
-  cursor: pointer;
-  transition: color 0.3s ease;
-  margin-top: 10px;
+  transition: color 0.3s;
 }
-
 .link-login:hover {
   color: #ffffff;
 }

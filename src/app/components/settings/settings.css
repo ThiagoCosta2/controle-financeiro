@@ -17,13 +17,11 @@
 .header {
   margin-bottom: 0.5rem;
 }
-
 .header h1 {
   margin: 0;
   font-size: 1.8rem;
   color: #343a40;
 }
-
 .header p {
   margin-top: 0.25rem;
   color: #6c757d;
@@ -33,21 +31,18 @@
   background-color: #ffffff;
   border-radius: 12px;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
-  overflow: hidden; /* Garante que os cantos arredondados sejam aplicados */
+  overflow: hidden;
 }
-
 .card-header {
   padding: 1rem 1.5rem;
   background-color: #f8f9fa;
   border-bottom: 1px solid #e9ecef;
 }
-
 .card-header h3 {
   margin: 0;
   font-size: 1.1rem;
   color: #343a40;
 }
-
 .card-body {
   padding: 1.5rem;
 }
@@ -55,7 +50,6 @@
 .form-group {
   margin-bottom: 1.5rem;
 }
-
 .form-group label {
   display: block;
   font-weight: 500;
@@ -71,19 +65,34 @@
   border: 1px solid #ced4da;
   border-radius: 8px;
   transition: border-color 0.2s, box-shadow 0.2s;
-  box-sizing: border-box; /* Garante que padding não afete a largura total */
+  box-sizing: border-box;
 }
-
 .form-control:focus {
   border-color: #80bdff;
   outline: 0;
-  box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+  box-shadow: 0 0 0 0.2rem rgba(52, 152, 219, 0.2);
 }
-
 .form-control[readonly] {
   background-color: #e9ecef;
   cursor: not-allowed;
 }
+
+/* --- NOVOS ESTILOS PARA O ÍCONE DE SENHA --- */
+.password-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+.password-wrapper .form-control {
+  padding-right: 2.5rem; /* Adiciona espaço no input para o ícone */
+}
+.password-icon {
+  position: absolute;
+  right: 1rem;
+  cursor: pointer;
+  color: #adb5bd;
+}
+/* --- FIM DOS NOVOS ESTILOS --- */
 
 .form-actions {
   display: flex;
@@ -91,24 +100,22 @@
   margin-top: 1.5rem;
 }
 
-.btn {
-  padding: 0.75rem 1.5rem;
-  border-radius: 8px;
+/* --- ESTILO DOS BOTÕES ATUALIZADO --- */
+.btn-primary {
+  background-color: #3498db;
+  color: white;
   border: none;
+  padding: 0.8rem 1.5rem;
+  border-radius: 8px;
   font-weight: 500;
   cursor: pointer;
   transition: background-color 0.2s;
 }
-
-.btn-primary {
-  background-color: #0d6efd;
-  color: white;
+.btn-primary:hover:not(:disabled) {
+  background-color: #2980b9;
 }
-.btn-primary:hover {
-  background-color: #0b5ed7;
-}
-.btn:disabled {
-  background-color: #adb5bd;
+.btn-primary:disabled {
+  background-color: #bdc3c7;
   cursor: not-allowed;
 }
 

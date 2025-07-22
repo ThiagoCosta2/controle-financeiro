@@ -6,10 +6,20 @@
 
   <div class="row">
     <div class="card chart-card">
-      <canvas id="incomeChartCanvas"></canvas>
+      <div class="card-header">
+        <h3>Receitas vs. Despesas (Mês Atual)</h3>
+      </div>
+      <div class="chart-container">
+        <canvas #incomeExpenseChart></canvas>
+      </div>
     </div>
     <div class="card chart-card">
-      <canvas id="expenseChartCanvas"></canvas>
+      <div class="card-header">
+        <h3>Projeção para o Próximo Mês</h3>
+      </div>
+      <div class="chart-container">
+        <canvas #nextMonthChart></canvas>
+      </div>
     </div>
   </div>
 
@@ -20,7 +30,7 @@
         <button class="icon-button" (click)="toggleBalanceVisibility()">
           <i
             class="fas"
-            [ngClass]="isBalanceVisible ? 'fa-eye-slash' : 'fa-eye'"
+            [ngClass]="isBalanceVisible ? 'fa-eye' : 'fa-eye-slash'"
           ></i>
         </button>
       </div>
@@ -50,20 +60,20 @@
         <h3>Histórico de Transações</h3>
         <select
           class="items-per-page-select"
-          [(ngModel)]="itemsPerPage"
-          (change)="onItemsPerPageChange()"
+          (change)="onItemsPerPageChange($event)"
         >
           <option *ngFor="let option of itemsPerPageOptions" [value]="option">
             {{ option }} por página
           </option>
         </select>
       </div>
-
       <table class="transaction-table">
         <thead>
           <tr>
+            <th class="icon-column"></th>
             <th>Descrição</th>
             <th class="text-right">Valor</th>
+            <th class="text-right">Ações</th>
           </tr>
         </thead>
         <tbody>
@@ -72,17 +82,52 @@
             [ngClass]="transaction.type"
           >
             <td>
+              <div class="transaction-icon" [ngClass]="transaction.type">
+                <i
+                  class="fas"
+                  [ngClass]="
+                    transaction.type === 'income'
+                      ? 'fa-arrow-up'
+                      : 'fa-arrow-down'
+                  "
+                ></i>
+              </div>
+            </td>
+            <td>
               <span class="description">{{ transaction.description }}</span>
               <span class="date">{{
                 transaction.date | date : "dd/MM/yyyy"
               }}</span>
             </td>
             <td class="text-right transaction-value">
-              {{ transaction.value | currency : "BRL" }}
+              <span *ngIf="isBalanceVisible">{{
+                transaction.value | currency : "BRL"
+              }}</span>
+              <span *ngIf="!isBalanceVisible">R$ ••••••</span>
+            </td>
+            <td class="text-right">
+              <div class="action-buttons-wrapper">
+                <ng-container *ngIf="transaction.isRecurring">
+                  <button
+                    (click)="openModal(transaction)"
+                    class="action-btn edit-btn"
+                    title="Editar Regra"
+                  >
+                    <i class="fas fa-pencil-alt"></i>
+                  </button>
+                  <button
+                    (click)="onDelete(transaction.sourceRuleId!)"
+                    class="action-btn delete-btn"
+                    title="Excluir Regra"
+                  >
+                    <i class="fas fa-trash-alt"></i>
+                  </button>
+                </ng-container>
+              </div>
             </td>
           </tr>
-          <tr *ngIf="transactionHistory.length === 0">
-            <td colspan="2" class="no-items">
+          <tr *ngIf="paginatedTransactions.length === 0">
+            <td colspan="4" class="no-items">
               Nenhuma transação no histórico.
             </td>
           </tr>
@@ -99,5 +144,11 @@
         </button>
       </div>
     </div>
+  </div>
+</div>
+
+<div class="popup-overlay" *ngIf="isModalOpen">
+  <div class="popup-container">
+    <app-transactions (transactionSaved)="closeModal()"></app-transactions>
   </div>
 </div>

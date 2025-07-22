@@ -1,11 +1,11 @@
-<div class="dashboard-container">
+<div class="dashboard-container" [class.sidebar-collapsed]="isSidebarCollapsed">
   <div class="balance-card">
     <div class="card-header">
       <span>Saldo do Mês</span>
       <button class="icon-button" (click)="toggleBalanceVisibility()">
         <i
           class="fas"
-          [ngClass]="isBalanceVisible ? 'fa-eye-slash' : 'fa-eye'"
+          [ngClass]="isBalanceVisible ? 'fa-eye' : 'fa-eye-slash'"
         ></i>
       </button>
     </div>
@@ -29,14 +29,16 @@
         <i class="fas fa-arrow-up"></i>
         <span>Receitas do Mês</span>
       </div>
-      <p>{{ monthlyIncome | currency : "BRL" }}</p>
+      <p *ngIf="isBalanceVisible">{{ monthlyIncome | currency : "BRL" }}</p>
+      <p *ngIf="!isBalanceVisible">R$ ••••••</p>
     </div>
     <div class="summary-card expense">
       <div class="card-header">
         <i class="fas fa-arrow-down"></i>
         <span>Despesas do Mês</span>
       </div>
-      <p>{{ monthlyExpense | currency : "BRL" }}</p>
+      <p *ngIf="isBalanceVisible">{{ monthlyExpense | currency : "BRL" }}</p>
+      <p *ngIf="!isBalanceVisible">R$ ••••••</p>
     </div>
   </div>
 
@@ -44,7 +46,8 @@
     <div class="section-header">
       <h3>Transações Recentes</h3>
       <button class="add-button" (click)="openTransactionModal()">
-        + Nova Transação
+        <i class="fas fa-plus"></i>
+        <span>Nova Transação</span>
       </button>
     </div>
     <ul class="transaction-list">
@@ -56,7 +59,9 @@
         <div class="transaction-icon">
           <i
             class="fas"
-            [ngClass]="transaction.type === 'income' ? 'fa-plus' : 'fa-minus'"
+            [ngClass]="
+              transaction.type === 'income' ? 'fa-arrow-up' : 'fa-arrow-down'
+            "
           ></i>
         </div>
         <div class="transaction-details">
@@ -64,7 +69,10 @@
           <span class="date">{{ transaction.date | date : "dd/MM/yyyy" }}</span>
         </div>
         <div class="transaction-value">
-          {{ transaction.value | currency : "BRL" }}
+          <span *ngIf="isBalanceVisible">{{
+            transaction.value | currency : "BRL"
+          }}</span>
+          <span *ngIf="!isBalanceVisible">R$ ••••••</span>
         </div>
       </li>
       <li *ngIf="recentTransactions.length === 0" class="no-transactions">
@@ -76,12 +84,12 @@
 
 <div
   class="modal-overlay"
-  *ngIf="showTransactionModal"
+  *ngIf="isTransactionModalOpen"
   (click)="closeTransactionModal()"
 >
   <div class="modal-content" (click)="$event.stopPropagation()">
     <app-transactions
-      (transactionSaved)="closeTransactionModal()"
+      (transactionSaved)="onTransactionSaved()"
     ></app-transactions>
   </div>
 </div>

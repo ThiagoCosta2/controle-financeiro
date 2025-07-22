@@ -1,15 +1,14 @@
+// ARQUIVO: src/app/models/transaction.model.ts
+
 export interface Transaction {
   id: string;
   userId: string;
-  userEmail?: string;
-  type: 'income' | 'expense';
-  value: number;
   description: string;
-  category?: string;
-  date: string;
+  value: number;
+  date: string; // Formato ISO 8601
+  type: 'income' | 'expense';
   isRecurring?: boolean;
-  recurrence?: 'daily' | 'weekly' | 'monthly' | 'yearly';
-  installments?: number;
-  currentInstallment?: number;
-  originalId?: string;
+
+  // PROPRIEDADE ADICIONADA: Opcional, para sabermos a origem da transação
+  sourceRuleId?: string;
 }

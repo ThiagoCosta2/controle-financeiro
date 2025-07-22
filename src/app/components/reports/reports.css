@@ -222,3 +222,66 @@ canvas {
   max-width: 100%;
   max-height: 100%;
 }
+
+/* ARQUIVO: src/app/components/reports/reports.css */
+
+/* --- Estilos para a Tabela de Histórico --- */
+
+.transaction-table th.icon-column {
+  width: 60px; /* Espaço para o ícone */
+}
+
+.transaction-table td {
+  vertical-align: middle; /* Alinha o conteúdo da célula verticalmente */
+}
+
+/* Ícones de Entrada/Saída (Círculos Coloridos) */
+.transaction-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+}
+
+.transaction-icon.income {
+  background-color: #2ecc71;
+}
+
+.transaction-icon.expense {
+  background-color: #e74c3c;
+}
+
+.action-buttons-wrapper {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.5rem;
+}
+
+.action-btn {
+  background: #f0f3f5;
+  border: none;
+  border-radius: 50%;
+  width: 36px;
+  height: 36px;
+  cursor: pointer;
+  color: #7f8c8d;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.action-btn:hover {
+  color: #fff;
+}
+
+.action-btn.edit-btn:hover {
+  background-color: #3498db; /* Azul no hover */
+}
+
+.action-btn.delete-btn:hover {
+  background-color: #e74c3c; /* Vermelho no hover */
+}

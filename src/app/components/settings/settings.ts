@@ -24,22 +24,26 @@ export class SettingsComponent implements OnInit {
   passwordForm: FormGroup;
   currentUser: User | null;
 
+  // Propriedades para controlar a visibilidade da senha
+  showCurrentPassword = false;
+  showNewPassword = false;
+  showConfirmPassword = false;
+
   constructor(
     private fb: FormBuilder,
     private authService: AuthService,
     private notificationService: NotificationService
   ) {
-    // Formulário para dados do perfil
     this.profileForm = this.fb.group({
-      username: ['', Validators.required],
-      email: [{ value: '', disabled: true }, Validators.required], // Email não pode ser alterado
+      // Corrigido para 'nome' para ser consistente com o modelo de utilizador
+      nome: ['', Validators.required],
+      email: [{ value: '', disabled: true }],
     });
 
-    // Formulário para mudança de senha
     this.passwordForm = this.fb.group(
       {
         currentPassword: ['', Validators.required],
-        newPassword: ['', [Validators.required, Validators.minLength(6)]],
+        newPassword: ['', [Validators.required, Validators.minLength(8)]],
         confirmPassword: ['', Validators.required],
       },
       { validator: this.passwordMatchValidator }
@@ -51,15 +55,14 @@ export class SettingsComponent implements OnInit {
   ngOnInit(): void {
     this.currentUser = this.authService.getCurrentUser();
     if (this.currentUser) {
-      // Preenche o formulário de perfil com os dados do usuário atual
+      // Preenche o formulário com os dados do utilizador
       this.profileForm.patchValue({
-        nome: this.currentUser.nome,
+        nome: this.currentUser.nome, // Corrigido para preencher o nome
         email: this.currentUser.email,
       });
     }
   }
 
-  // Validador customizado para checar se as senhas coincidem
   passwordMatchValidator(form: FormGroup) {
     const newPassword = form.get('newPassword')?.value;
     const confirmPassword = form.get('confirmPassword')?.value;
@@ -81,12 +84,12 @@ export class SettingsComponent implements OnInit {
         nome: this.profileForm.value.nome,
       };
 
-      const success = this.authService.updateUser(updatedUser);
-      if (success) {
+      if (this.authService.updateUser(updatedUser)) {
         this.notificationService.show(
           'Perfil atualizado com sucesso!',
           'success'
         );
+        this.profileForm.markAsPristine(); // Marca o formulário como "não modificado"
       } else {
         this.notificationService.show(
           'Ocorreu um erro ao atualizar o perfil.',
@@ -106,16 +109,10 @@ export class SettingsComponent implements OnInit {
     }
 
     const { currentPassword, newPassword } = this.passwordForm.value;
-    const success = this.authService.changePassword(
-      currentPassword,
-      newPassword
-    );
-
-    if (success) {
+    if (this.authService.changePassword(currentPassword, newPassword)) {
       this.notificationService.show('Senha alterada com sucesso!', 'success');
       this.passwordForm.reset();
-    } else {
-      this.notificationService.show('A senha atual está incorreta.', 'error');
     }
+    // A notificação de erro já é tratada dentro do authService
   }
 }
